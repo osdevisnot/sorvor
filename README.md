@@ -2,16 +2,17 @@
 
 > fast, zero config server for single page applications.
 
-### :muscle: Powered By
-
-- [esbuild](https://esbuild.github.io/) - an extremely fast JavaScript bundler
-- [golang](https://golang.org/) - an expressive, concise, clean, and efficient programming language.
-
 ## :sparkles: Features
 
-- SPA Routing - redirects path requests to `src/index.html` for frontend routing
-- Asset Pipeline - strong asset processing with simple premitives
-- HTML entry point - use `src/index.html` as an entry point for an application
+- **HTML EntryPoint** - use `src/index.html` as an entry point for an application.
+- **SPA Routing** - redirects path requests to `src/index.html` for frontend routing.
+- **Asset Pipeline** - strong asset processing with simple primitives.
+- **Live Reloading** - reloads the browsers on code change.
+
+### :muscle: Powered By
+
+- [esbuild](https://esbuild.github.io/) - an extremely fast JavaScript bundler.
+- [golang](https://golang.org/) - an expressive, concise, clean, and efficient programming language.
 
 ## :zap: Installation
 

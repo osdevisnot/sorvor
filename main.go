@@ -14,6 +14,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/evanw/esbuild/pkg/cli"
 	"github.com/gookit/color"
+	"github.com/osdevisnot/sorvor/pkg/livereload"
 )
 
 type sorvor struct {
@@ -39,12 +40,12 @@ func handleError(message string, err error, shouldExit bool) {
 	}
 }
 
-func readOptions(pkg npm) sorvor {
+func readOptions(pkg npm) *sorvor {
 	var err error
 	var esbuildArgs []string
 
 	osArgs := os.Args[1:]
-	serv := sorvor{}
+	serv := &sorvor{}
 
 	for _, arg := range osArgs {
 		switch {
@@ -94,7 +95,7 @@ func readPkg() npm {
 	return pkg
 }
 
-func (serv sorvor) esbuild(entry string) string {
+func (serv *sorvor) esbuild(entry string) string {
 	serv.buildOptions.EntryPoints = []string{filepath.Join(serv.src, entry)}
 	result := api.Build(serv.buildOptions)
 	var outfile string
@@ -108,7 +109,7 @@ func (serv sorvor) esbuild(entry string) string {
 	return outfile
 }
 
-func (serv sorvor) build(pkg npm) []string {
+func (serv *sorvor) build(pkg npm) []string {
 
 	srcIndex := filepath.Join(serv.src, "index.html")
 	targetIndex := filepath.Join(serv.buildOptions.Outdir, "index.html")
@@ -116,6 +117,9 @@ func (serv sorvor) build(pkg npm) []string {
 	var entries []string
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
+		"livereload": func() template.JS {
+			return template.JS(livereload.Snippet)
+		},
 		"esbuild": func(entry string) string {
 			if serv.dev == true {
 				entries = append(entries, filepath.Join(serv.src, entry))
@@ -136,27 +140,26 @@ func (serv sorvor) build(pkg npm) []string {
 	return entries
 }
 
-func (serv sorvor) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	//writer.Header().Set("Access-Control-Allow-Origin", "*")
-
+func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
+	res.Header().Set("access-control-allow-origin", "*")
 	path := filepath.Join(serv.buildOptions.Outdir, filepath.Clean(request.URL.Path))
 
 	if stat, err := os.Stat(path); err != nil {
 		// serve a root index when path is not found
-		http.ServeFile(writer, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
+		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
 		return
 	} else if stat.IsDir() {
 		// serve root index when requested path is a directory
-		http.ServeFile(writer, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
+		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
 		return
 	}
 
 	// else just serve the file normally...
-	http.ServeFile(writer, request, path)
+	http.ServeFile(res, request, path)
 	return
 }
 
-func (serv sorvor) serve(pkg npm) {
+func (serv *sorvor) serve(pkg npm) {
 	serv.buildOptions.EntryPoints = serv.build(pkg)
 
 	wg := new(sync.WaitGroup)
@@ -174,7 +177,14 @@ func (serv sorvor) serve(pkg npm) {
 	// start our own server
 	go func() {
 		log.Printf("%s: sørvør ready on %s\n", color.FgGreen.Render("Info"), color.FgLightBlue.Render(color.Bold.Render("http://localhost"+serv.port)))
-		err := http.ListenAndServe(serv.port, &serv)
+
+		liveReload := livereload.New()
+		liveReload.Start()
+		http.Handle("/livereload", liveReload)
+
+		http.Handle("/", serv)
+
+		err := http.ListenAndServe(serv.port, nil)
 		handleError("Unable to start http server", err, false)
 		wg.Done()
 	}()
