@@ -118,11 +118,10 @@ func (serv sorvor) build(pkg npmPackage) []string {
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
 		"esbuild": func(entry string) string {
 			if serv.dev == true {
-				entries = append(entries, filepath.Join(serv.buildOptions.Outdir, entry))
-				return "http://localhost:8000/" + entry
-			} else {
-				return serv.esbuild(entry)
+				entries = append(entries, filepath.Join(serv.src, entry))
+				return "http://localhost:" + strconv.Itoa(int(serv.serveOptions.Port)) + "/" + entry
 			}
+			return serv.esbuild(entry)
 		},
 	}).ParseFiles(srcIndex)
 	handleError("Unable to parse index.html", err, true)
@@ -138,6 +137,8 @@ func (serv sorvor) build(pkg npmPackage) []string {
 }
 
 func (serv sorvor) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	//writer.Header().Set("Access-Control-Allow-Origin", "*")
+
 	path := filepath.Join(serv.buildOptions.Outdir, filepath.Clean(request.URL.Path))
 
 	if stat, err := os.Stat(path); err != nil {
@@ -163,7 +164,7 @@ func (serv sorvor) serve(pkg npmPackage) {
 
 	// start esbuild server
 	go func() {
-		_, err := api.Serve(api.ServeOptions{}, serv.buildOptions)
+		_, err := api.Serve(serv.serveOptions, serv.buildOptions)
 		if err != nil {
 			handleError("Failed to start esbuild server", err, false)
 			wg.Done()

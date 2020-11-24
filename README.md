@@ -9,8 +9,9 @@
 
 ## :sparkles: Features
 
-- SPA Routing
-- Asset Pipeline
+- SPA Routing - redirects path requests to `src/index.html` for frontend routing
+- Asset Pipeline - strong asset processing with simple premitives
+- HTML entry point - use `src/index.html` as an entry point for an application
 
 ## :zap: Installation
 
@@ -32,6 +33,18 @@ You can use `sørvør` as a local development server or as a build tool. By defa
 
 ```bash
 sorvor --dev
+```
+
+## :sunglasses: Asset Pipeline
+
+`sørvør` provides strong asset pipeline with simple premitives.
+
+Currently, only [esbuild](https://esbuild.github.io/) assets are supported.
+
+For Example: configure `index.html` to use `esbuild` bundling for `index.js`
+
+```html
+<script type="module" src="{{ esbuild "index.js" }}"></script>
 ```
 
 ## :anger: Configuration
