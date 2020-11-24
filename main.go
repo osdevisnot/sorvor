@@ -16,6 +16,19 @@ import (
 	"github.com/gookit/color"
 )
 
+type sorvor struct {
+	buildOptions api.BuildOptions
+	serveOptions api.ServeOptions
+	src          string
+	port         string
+	dev          bool
+}
+
+type npm struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
 func handleError(message string, err error, shouldExit bool) {
 	if err != nil {
 		if shouldExit {
@@ -26,15 +39,7 @@ func handleError(message string, err error, shouldExit bool) {
 	}
 }
 
-type sorvor struct {
-	buildOptions api.BuildOptions
-	serveOptions api.ServeOptions
-	src          string
-	port         string
-	dev          bool
-}
-
-func readOptions(pkg npmPackage) sorvor {
+func readOptions(pkg npm) sorvor {
 	var err error
 	var esbuildArgs []string
 
@@ -77,13 +82,8 @@ func readOptions(pkg npmPackage) sorvor {
 	return serv
 }
 
-type npmPackage struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-}
-
-func readNpmPackage() npmPackage {
-	pkg := npmPackage{}
+func readPkg() npm {
+	pkg := npm{}
 
 	// file, err := ioutil.ReadFile("package.json")
 	// handleError("Unable to read package.json", err, false)
@@ -108,7 +108,7 @@ func (serv sorvor) esbuild(entry string) string {
 	return outfile
 }
 
-func (serv sorvor) build(pkg npmPackage) []string {
+func (serv sorvor) build(pkg npm) []string {
 
 	srcIndex := filepath.Join(serv.src, "index.html")
 	targetIndex := filepath.Join(serv.buildOptions.Outdir, "index.html")
@@ -156,7 +156,7 @@ func (serv sorvor) ServeHTTP(writer http.ResponseWriter, request *http.Request) 
 	return
 }
 
-func (serv sorvor) serve(pkg npmPackage) {
+func (serv sorvor) serve(pkg npm) {
 	serv.buildOptions.EntryPoints = serv.build(pkg)
 
 	wg := new(sync.WaitGroup)
@@ -183,7 +183,7 @@ func (serv sorvor) serve(pkg npmPackage) {
 }
 
 func main() {
-	pkg := readNpmPackage()
+	pkg := readPkg()
 	serv := readOptions(pkg)
 
 	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
