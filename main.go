@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -15,14 +13,15 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/evanw/esbuild/pkg/cli"
+	"github.com/gookit/color"
 )
 
 func handleError(message string, err error, shouldExit bool) {
 	if err != nil {
 		if shouldExit {
-			log.Fatalf("%s : %v\n", message, err)
+			log.Fatalf("%s: %s - %v\n", color.FgRed.Render("Error"), message, err)
 		} else {
-			log.Printf("%s : %v\n", message, err)
+			log.Printf("%s: %s - %v\n", color.FgYellow.Render("Warn"), message, err)
 		}
 	}
 }
@@ -86,11 +85,11 @@ type npmPackage struct {
 func readNpmPackage() npmPackage {
 	pkg := npmPackage{}
 
-	file, err := ioutil.ReadFile("package.json")
-	handleError("Unable to read package.json", err, false)
+	// file, err := ioutil.ReadFile("package.json")
+	// handleError("Unable to read package.json", err, false)
 
-	err = json.Unmarshal(file, &pkg)
-	handleError("Unable to parse package.json", err, false)
+	// err = json.Unmarshal(file, &pkg)
+	// handleError("Unable to parse package.json", err, false)
 
 	return pkg
 }
@@ -173,7 +172,7 @@ func (serv sorvor) serve(pkg npmPackage) {
 
 	// start our own server
 	go func() {
-		log.Printf("Sorvor Ready on http://localhost%s\n", serv.port)
+		log.Printf("%s: sørvør ready on %s\n", color.FgGreen.Render("Info"), color.FgLightBlue.Render(color.Bold.Render("http://localhost"+serv.port)))
 		err := http.ListenAndServe(serv.port, &serv)
 		handleError("Unable to start http server", err, false)
 		wg.Done()

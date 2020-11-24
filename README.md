@@ -7,12 +7,12 @@
 - [esbuild](https://esbuild.github.io/) - an extremely fast JavaScript bundler
 - [golang](https://golang.org/) - an expressive, concise, clean, and efficient programming language.
 
-## Features
+## :sparkles: Features
 
 - SPA Routing
 - Asset Pipeline
 
-## Installation
+## :zap: Installation
 
 Use [gobinaries](https://gobinaries.com/) to install sørvør:
 
@@ -26,7 +26,7 @@ Alternatively, if you have [go](https://golang.org/) installed, use `go get` to 
 go get github.com/osdevisnot/sorvor
 ```
 
-## Usage
+## :plate_with_cutlery: Usage
 
 You can use `sørvør` as a local development server or as a build tool. By default, the `sørvør` command will build your project and exit. To start a local development server, pass `--dev` as a command line argument.
 
@@ -34,15 +34,15 @@ You can use `sørvør` as a local development server or as a build tool. By defa
 sorvor --dev
 ```
 
-## Configuration
+## :anger: Configuration
 
 For most part, `sørvør` tries to use sensible defaults, but you can configure the behaviour using command line arguments below:
 
 | cli argument | description                 | default value |
 | ------------ | --------------------------- | ------------- |
-| --src=...    | source directory for sørvør | `src`         |
-| --port=...   | port for sørvør             | `1234`        |
-| --dev        | enable development mode     | `false`       |
+| `--src=...`  | source directory for sørvør | `src`         |
+| `--port=...` | port for sørvør             | `1234`        |
+| `--dev`      | enable development mode     | `false`       |
 
 `sørvør` forwards all the other command line arguments to `esbuild`. Please refer documentation for [simple esbuild options](https://esbuild.github.io/api/#simple-options) or [advance options](https://esbuild.github.io/api/#advanced-options) to further customize your builds.
 
@@ -54,12 +54,12 @@ sorvor --format=esm --dev
 
 `sørvør` configures below values for esbuild as defaults:
 
-| cli argument | description                          | default value                     |
-| ------------ | ------------------------------------ | --------------------------------- |
-| --bundle     | enables bundling output files        | `true`                            |
-| --write      | enables writing built output to disk | `true`                            |
-| --port=...   | port to start esbuild in serve mode  | `1234` (if --dev mode is enabled) |
-| --outdir=... | target directory for esbuild output  | `dist`                            |
+| cli argument   | description                          | default value                     |
+| -------------- | ------------------------------------ | --------------------------------- |
+| `--bundle`     | enables bundling output files        | `true`                            |
+| `--write`      | enables writing built output to disk | `true`                            |
+| `--port=...`   | port to start esbuild in serve mode  | `1234` (if --dev mode is enabled) |
+| `--outdir=...` | target directory for esbuild output  | `dist`                            |
 
 ## :clinking_glasses: License
 
