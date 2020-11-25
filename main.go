@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,8 +11,8 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/evanw/esbuild/pkg/cli"
-	"github.com/gookit/color"
 	"github.com/osdevisnot/sorvor/pkg/livereload"
+	"github.com/osdevisnot/sorvor/pkg/logger"
 )
 
 type sorvor struct {
@@ -30,16 +28,6 @@ type npm struct {
 	Version string `json:"version"`
 }
 
-func handleError(message string, err error, shouldExit bool) {
-	if err != nil {
-		if shouldExit {
-			log.Fatalf("%s: %s - %v\n", color.FgRed.Render("Error"), message, err)
-		} else {
-			log.Printf("%s: %s - %v\n", color.FgYellow.Render("Warn"), message, err)
-		}
-	}
-}
-
 func readOptions(pkg npm) *sorvor {
 	var err error
 	var esbuildArgs []string
@@ -53,7 +41,7 @@ func readOptions(pkg npm) *sorvor {
 			serv.src = arg[len("--src="):]
 		case strings.HasPrefix(arg, "--port"):
 			port, err := strconv.Atoi(arg[len("--port="):])
-			handleError("Invalid Port Value", err, true)
+			logger.Fatal(err, "Invalid Port Value")
 			serv.port = ":" + strconv.Itoa(port)
 			serv.serveOptions.Port = uint16(port + 1)
 		case arg == "--dev":
@@ -64,7 +52,7 @@ func readOptions(pkg npm) *sorvor {
 	}
 
 	serv.buildOptions, err = cli.ParseBuildOptions(esbuildArgs)
-	handleError("Invalid option for esbuild", err, true)
+	logger.Fatal(err, "Invalid option for esbuild")
 
 	serv.buildOptions.Bundle = true
 	serv.buildOptions.Write = true
@@ -103,7 +91,6 @@ func (serv *sorvor) esbuild(entry string) string {
 		if filepath.Ext(file.Path) != "map" {
 			cwd, _ := os.Getwd()
 			outfile = strings.TrimPrefix(file.Path, filepath.Join(cwd, serv.buildOptions.Outdir))
-			fmt.Printf("created file %s from %s\n", outfile, entry)
 		}
 	}
 	return outfile
@@ -128,14 +115,14 @@ func (serv *sorvor) build(pkg npm) []string {
 			return serv.esbuild(entry)
 		},
 	}).ParseFiles(srcIndex)
-	handleError("Unable to parse index.html", err, true)
+	logger.Fatal(err, "Unable to parse index.html")
 
 	file, err := os.Create(targetIndex)
-	handleError("Unable to create index.html in out dir", err, true)
+	logger.Fatal(err, "Unable to create index.html in outdir")
 	defer file.Close()
 
 	err = tmpl.Execute(file, pkg)
-	handleError("Unable to execute index.html", err, true)
+	logger.Fatal(err, "Unable to execute index.html")
 
 	return entries
 }
@@ -169,23 +156,23 @@ func (serv *sorvor) serve(pkg npm) {
 	go func() {
 		_, err := api.Serve(serv.serveOptions, serv.buildOptions)
 		if err != nil {
-			handleError("Failed to start esbuild server", err, false)
+			logger.Error(err, "Failed to start esbuild server")
 			wg.Done()
 		}
 	}()
 
 	// start our own server
 	go func() {
-		log.Printf("%s: sørvør ready on %s\n", color.FgGreen.Render("Info"), color.FgLightBlue.Render(color.Bold.Render("http://localhost"+serv.port)))
+		logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://localhost", serv.port))
 
-		liveReload := livereload.New()
+		liveReload := livereload.New(serv.src)
 		liveReload.Start()
 		http.Handle("/livereload", liveReload)
 
 		http.Handle("/", serv)
 
 		err := http.ListenAndServe(serv.port, nil)
-		handleError("Unable to start http server", err, false)
+		logger.Error(err, "Failed to start http server")
 		wg.Done()
 	}()
 
@@ -197,7 +184,7 @@ func main() {
 	serv := readOptions(pkg)
 
 	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
-	handleError("Unable to create output directory", err, true)
+	logger.Fatal(err, "Failed to create output directory")
 
 	if serv.dev == true {
 		serv.serve(pkg)
