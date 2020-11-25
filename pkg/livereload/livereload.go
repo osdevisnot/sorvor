@@ -1,3 +1,13 @@
+// Implementation of HTML5 Server Side Events to Livereload connected browsers
+//
+// Usage:
+//  first start a livereload instance
+//	> liveReload := livereload.New(serv.src)
+//	> liveReload.Start()
+//  then, install an HTTP handler on desired path
+//	> http.Handle("/livereload", liveReload)
+//
+// The browser must support HTML5 Server Side Events
 package livereload
 
 import (
@@ -11,10 +21,9 @@ import (
 	"github.com/radovskyb/watcher"
 )
 
-var notify *watcher.Watcher
-
-// Snippet is a minimal javascript client for reloading browse
-// Embed in your `index.html` using a script tag: <script>{{ LiveReload.Snippet }}</script>
+// Snippet is a minimal javascript client for browsers
+// Embed in your `index.html` using a script tag:
+// <script>{{ LiveReload.Snippet }}</script>
 const Snippet = `
 	const source = new EventSource('/livereload');
 	const reload = () => location.reload(true);
@@ -23,13 +32,12 @@ const Snippet = `
 	console.log('[sørvør] listening for file changes');
 `
 
-// LiveReload keeps track of connected browser clients and
-// broadcasts messages to those connected browser clients.
+// LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {
-	clients  map[chan string]bool // map of connection pool, keys are channels over which we push an event
-	incoming chan chan string     // channel to push new client to
+	clients  map[chan string]bool // map of connection pool
+	incoming chan chan string     // channel to push new client
 	outgoing chan chan string     // channel to push disconnected clients
-	messages chan string          // channel into which messages are pushed
+	messages chan string          // channel to push messages
 	root     string               // root directory to watch
 }
 
@@ -74,7 +82,7 @@ func (livereload *LiveReload) Start() {
 				logger.Info("Reloading Clients - File Changed -", logger.BlueText(relative))
 				livereload.messages <- "reload"
 			case err := <-notify.Error:
-				logger.Error(err, "Error Watching Fieles")
+				logger.Error(err, "Error Watching Files")
 			case <-notify.Closed:
 				return
 			}
@@ -99,8 +107,8 @@ func (livereload LiveReload) SendEvent(res http.ResponseWriter, eventData string
 		eventType = "message"
 	}
 
-	res.Write([]byte(fmt.Sprintf("event: %s\nid: 0\ndata: %s\n", eventType, eventData)))
-	res.Write([]byte("\n\n"))
+	_, _ = res.Write([]byte(fmt.Sprintf("event: %s\nid: 0\ndata: %s\n", eventType, eventData)))
+	_, _ = res.Write([]byte("\n\n"))
 }
 
 // ServeHTTP handler for `/livereload` urls
