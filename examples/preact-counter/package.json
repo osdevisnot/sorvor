@@ -3,8 +3,9 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "yarn build --dev",
-    "build": "sorvor --loader:.js=jsx --jsx-factory=h"
+    "prebuild": "npm install",
+    "build": "sorvor --loader:.js=jsx --jsx-factory=h",
+    "start": "yarn build --dev"
   },
   "dependencies": {
     "preact": "^10.5.7"
