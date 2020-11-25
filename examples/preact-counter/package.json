@@ -1,0 +1,12 @@
+{
+  "name": "preact-counter",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn build --dev",
+    "build": "sorvor --loader:.js=jsx --jsx-factory=h"
+  },
+  "dependencies": {
+    "preact": "^10.5.7"
+  }
+}

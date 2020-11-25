@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -26,6 +27,14 @@ type sorvor struct {
 type npm struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+}
+
+var extensions = map[string]string{
+	".js":  ".js",
+	".ts":  ".js",
+	".jsx": ".js",
+	".tsx": ".js",
+	".css": ".css",
 }
 
 func readOptions(pkg npm) *sorvor {
@@ -67,7 +76,6 @@ func readOptions(pkg npm) *sorvor {
 	if serv.src == "" {
 		serv.src = "src"
 	}
-
 	return serv
 }
 
@@ -110,7 +118,9 @@ func (serv *sorvor) build(pkg npm) []string {
 		"esbuild": func(entry string) string {
 			if serv.dev == true {
 				entries = append(entries, filepath.Join(serv.src, entry))
-				return "http://localhost:" + strconv.Itoa(int(serv.serveOptions.Port)) + "/" + entry
+				ext := path.Ext(entry)
+				outfile := entry[0:len(entry)-len(ext)] + extensions[ext]
+				return "http://localhost:" + strconv.Itoa(int(serv.serveOptions.Port)) + "/" + outfile
 			}
 			return serv.esbuild(entry)
 		},

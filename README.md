@@ -36,6 +36,10 @@ You can use `sørvør` as a local development server or as a build tool. By defa
 sorvor --dev
 ```
 
+## Example Projects
+
+Check out the [example projects](examples) for fully integrated setup.
+
 ## :sunglasses: Asset Pipeline
 
 `sørvør` provides great asset pipeline with simple primitives.
@@ -99,7 +103,7 @@ This project is inspired by [servør](https://www.npmjs.com/package/servor) from
 
 This project currently lacks many features already available in [servør](https://www.npmjs.com/package/servor), some of which will be implemented in the future. The idea is to try to achieve feature parity with servør, for features that are most essential.
 
-I want to avoid implementing features that are already on roadmap for `esbuild`. The idea is to use esbuild as is without duplicating efforts.
+I want to avoid implementing features that are already on the roadmap for `esbuild`. The idea is to use esbuild as is without duplicating efforts.
 
 ## :clinking_glasses: License
 

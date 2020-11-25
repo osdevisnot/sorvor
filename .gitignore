@@ -16,5 +16,4 @@ vendor/
 
 # Project ignores
 dist/
-src/
-
+node_modules
