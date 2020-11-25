@@ -16,7 +16,7 @@
 
 ## :zap: Installation
 
-Use [gobinaries](https://gobinaries.com/) to install sørvør:
+Use [go binaries](https://gobinaries.com/) to install sørvør:
 
 ```bash
 curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
@@ -93,13 +93,13 @@ sorvor --format=esm --dev
 
 `sørvør` started with desire to simplify frontend tooling, with strong focus on speed of execution. It uses `esbuild` for bundling modern javascript and typescript syntax to a lower target. The idea here is to implement features that `esbuild` deems as out of scope, but are necessary for decent development environment.
 
-This project is inspired by [servør](https://www.npmjs.com/package/servor) from [Luke Jackson](https://twitter.com/lukejacksonn), which provides similar zero dependency development experience but lacks integration with bundler/build tools. I choose golang to implement this project to solidify my learning of the launguage and to achieve a zero dependency model.
+This project is inspired by [servør](https://www.npmjs.com/package/servor) from [Luke Jackson](https://twitter.com/lukejacksonn), which provides similar zero dependency development experience but lacks integration with bundler/build tools. I choose golang to implement this project to solidify my learning of the language and to achieve a zero dependency model.
 
 ## :microscope: Roadmap
 
-This project currently lacks many features already available in [servør](https://www.npmjs.com/package/servor), some of which will be implemented in future. The idea is to try to achieve feature parity with servør, for features that are most essential.
+This project currently lacks many features already available in [servør](https://www.npmjs.com/package/servor), some of which will be implemented in the future. The idea is to try to achieve feature parity with servør, for features that are most essential.
 
-I want to avoid implemention features that are already on roadmap for `esbuild`. The idea is to use features from esbuild as is without duplicating efforts.
+I want to avoid implementing features that are already on roadmap for `esbuild`. The idea is to use esbuild as is without duplicating efforts.
 
 ## :clinking_glasses: License
 
