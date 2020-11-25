@@ -95,9 +95,11 @@ sorvor --format=esm --dev
 | `--port=...`   | port to start esbuild in serve mode  | `1234` (if --dev mode is enabled) |
 | `--outdir=...` | target directory for esbuild output  | `dist`                            |
 
-## :hatching_chick: Motivation
+## :hatching_chick: Motivations/Inspirations
 
 `sørvør` started with desire to simplify frontend tooling, with strong focus on speed of execution. It uses `esbuild` for bundling modern javascript and typescript syntax to a lower target. The idea here is to implement features that `esbuild` deems as out of scope, but are necessary for decent development environment.
+
+This project is inspired by [servør](https://www.npmjs.com/package/servor) from [Luke Jackson](https://twitter.com/lukejacksonn), which provides similar zero dependency development experience but lacks integration with bundler/build tools. I choose golang to implement this project to solidify my learning of the launguage and to achieve a zero dependency model.
 
 ## :clinking_glasses: License
 
