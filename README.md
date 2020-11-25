@@ -1,13 +1,13 @@
 # sørvør
 
-> fast, zero config server for single page applications.
+> extremely fast, zero config server for modern web applications.
 
 ## :sparkles: Features
 
 - **HTML EntryPoint** - use `src/index.html` as an entry point for an application.
 - **SPA Routing** - redirects path requests to `src/index.html` for frontend routing.
-- **Asset Pipeline** - strong asset processing with simple primitives.
-- **Live Reloading** - reloads the browsers on code change.
+- **Asset Pipeline** - great asset processing with simple primitives.
+- **Live Reloading** - reload browsers on code change.
 
 ### :muscle: Powered By
 
@@ -38,14 +38,34 @@ sorvor --dev
 
 ## :sunglasses: Asset Pipeline
 
-`sørvør` provides strong asset pipeline with simple premitives.
+`sørvør` provides great asset pipeline with simple primitives.
 
-Currently, only [esbuild](https://esbuild.github.io/) assets are supported.
+#### Build JS or CSS with esbuild
 
-For Example: configure `index.html` to use `esbuild` bundling for `index.js`
+To run entry points from `src/index.html` through esbuild, use `esbuild` function in the index file
+
+Example:
 
 ```html
 <script type="module" src="{{ esbuild "index.js" }}"></script>
+```
+
+This will bundle `index.js` file and serve the build output on local development server.
+
+#### Enable Livereload
+
+To enable livereload functionality, use `livereload` function in the index file
+
+Example:
+
+```html
+<script>
+  {
+    {
+      livereload
+    }
+  }
+</script>
 ```
 
 ## :anger: Configuration
@@ -58,7 +78,7 @@ For most part, `sørvør` tries to use sensible defaults, but you can configure 
 | `--port=...` | port for sørvør             | `1234`        |
 | `--dev`      | enable development mode     | `false`       |
 
-`sørvør` forwards all the other command line arguments to `esbuild`. Please refer documentation for [simple esbuild options](https://esbuild.github.io/api/#simple-options) or [advance options](https://esbuild.github.io/api/#advanced-options) to further customize your builds.
+`sørvør` forwards all the other command line arguments to `esbuild`. Please refer documentation for [simple esbuild options](https://esbuild.github.io/api/#simple-options) or [advance options](https://esbuild.github.io/api/#advanced-options) to further customize the bundling process.
 
 For example, to use `esbuild` with modern `esm` format, use a command like this:
 
@@ -74,6 +94,10 @@ sorvor --format=esm --dev
 | `--write`      | enables writing built output to disk | `true`                            |
 | `--port=...`   | port to start esbuild in serve mode  | `1234` (if --dev mode is enabled) |
 | `--outdir=...` | target directory for esbuild output  | `dist`                            |
+
+## :hatching_chick: Motivation
+
+`sørvør` started with desire to simplify frontend tooling, with strong focus on speed of execution. It uses `esbuild` for bundling modern javascript and typescript syntax to a lower target. The idea here is to implement features that `esbuild` deems as out of scope, but are necessary for decent development environment.
 
 ## :clinking_glasses: License
 
