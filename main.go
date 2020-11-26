@@ -1,3 +1,4 @@
+// an extremely fast, zero config server for modern web applications.
 package main
 
 import (

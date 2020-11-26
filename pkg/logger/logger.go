@@ -1,4 +1,4 @@
-// minimal error logger with built in error handling and color coded log messages
+// Package logger provides color coded log messages with error handling
 package logger
 
 import (

@@ -1,13 +1,10 @@
-// Implementation of HTML5 Server Side Events to Livereload connected browsers
-//
-// Usage:
-//  first start a livereload instance
-//	> liveReload := livereload.New(serv.src)
-//	> liveReload.Start()
-//  then, install an HTTP handler on desired path
-//	> http.Handle("/livereload", liveReload)
-//
-// The browser must support HTML5 Server Side Events
+// Package livereload implements HTML5 Server Side Events to live reload connected browsers
+// Usage: first start the livereload instance
+//		liveReload := livereload.New(serv.src)
+//		liveReload.Start()
+// then, install an HTTP handler on desired path
+//		http.Handle("/livereload", liveReload)
+// The target browser must support HTML5 Server Side Events.
 package livereload
 
 import (
@@ -21,9 +18,8 @@ import (
 	"github.com/radovskyb/watcher"
 )
 
-// Snippet is a minimal javascript client for browsers
-// Embed in your `index.html` using a script tag:
-// <script>{{ LiveReload.Snippet }}</script>
+// Snippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
+//		<script>{{ LiveReload.Snippet }}</script>
 const Snippet = `
 	const source = new EventSource('/livereload');
 	const reload = () => location.reload(true);
@@ -35,13 +31,13 @@ const Snippet = `
 // LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {
 	clients  map[chan string]bool // map of connection pool
-	incoming chan chan string     // channel to push new client
+	incoming chan chan string     // channel to push new clients
 	outgoing chan chan string     // channel to push disconnected clients
-	messages chan string          // channel to push messages
+	messages chan string          // channel to publish new messages
 	root     string               // root directory to watch
 }
 
-// Start manages connections and broadcasts messages to current connected browser clients
+// Start manages connections and broadcasts messages to connected clients
 func (livereload *LiveReload) Start() {
 	cwd, _ := os.Getwd()
 	notify := watcher.New()
@@ -94,8 +90,8 @@ func (livereload *LiveReload) Start() {
 	}()
 }
 
-// SendEvent is helper to create formatted SSE events based on event type and data.
-func (livereload LiveReload) SendEvent(res http.ResponseWriter, eventData string) {
+// sendEvent is helper to create formatted SSE events based on message data.
+func (livereload *LiveReload) sendEvent(res http.ResponseWriter, eventData string) {
 	var eventType string
 
 	switch eventData {
@@ -111,7 +107,7 @@ func (livereload LiveReload) SendEvent(res http.ResponseWriter, eventData string
 	_, _ = res.Write([]byte("\n\n"))
 }
 
-// ServeHTTP handler for `/livereload` urls
+// ServeHTTP is a request handler for http requests
 func (livereload *LiveReload) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	connection, ok := res.(http.Flusher)
 	if !ok {
@@ -141,7 +137,7 @@ func (livereload *LiveReload) ServeHTTP(res http.ResponseWriter, req *http.Reque
 	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.WriteHeader(200)
 
-	livereload.SendEvent(res, "ready")
+	livereload.sendEvent(res, "ready")
 	connection.Flush()
 
 	for {
@@ -149,7 +145,7 @@ func (livereload *LiveReload) ServeHTTP(res http.ResponseWriter, req *http.Reque
 		if !open {
 			break
 		}
-		livereload.SendEvent(res, msg)
+		livereload.sendEvent(res, msg)
 		connection.Flush()
 	}
 }
