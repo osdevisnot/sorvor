@@ -3,8 +3,9 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "prebuild": "npm install",
-    "build": "sorvor --loader:.js=jsx --jsx-factory=h",
+    "prebuild": "yarn",
+    "build": "sorvor --loader:.js=jsx --jsx-factory=h ",
+    "prod": "yarn build --minify --sourcemap=external",
     "start": "yarn build --dev"
   },
   "dependencies": {
