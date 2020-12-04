@@ -143,20 +143,20 @@ func (serv *sorvor) build(pkg npm) []string {
 
 func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	res.Header().Set("access-control-allow-origin", "*")
-	path := filepath.Join(serv.buildOptions.Outdir, filepath.Clean(request.URL.Path))
+	root := filepath.Join(serv.buildOptions.Outdir, filepath.Clean(request.URL.Path))
 
-	if stat, err := os.Stat(path); err != nil {
-		// serve a root index when path is not found
+	if stat, err := os.Stat(root); err != nil {
+		// serve a root index when root is not found
 		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
 		return
 	} else if stat.IsDir() {
-		// serve root index when requested path is a directory
+		// serve root index when requested root is a directory
 		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
 		return
 	}
 
 	// else just serve the file normally...
-	http.ServeFile(res, request, path)
+	http.ServeFile(res, request, root)
 	return
 }
 
