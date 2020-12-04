@@ -8,9 +8,9 @@ import (
 	"github.com/gookit/color"
 )
 
-var prefixError = color.FgRed.Render("Error :")
-var prefixWarn = color.FgYellow.Render("Warn :")
-var prefixInfo = color.FgGreen.Render("Info :")
+var prefixError = color.FgRed.Render("error :")
+var prefixWarn = color.FgYellow.Render("warn :")
+var prefixInfo = color.FgGreen.Render("info :")
 
 // Fatal logs message with red colored prefix and exits the program if `err != nil`
 func Fatal(err error, msg ...string) {

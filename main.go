@@ -95,6 +95,9 @@ func readPkg() npm {
 func (serv *sorvor) esbuild(entry string) string {
 	serv.buildOptions.EntryPoints = []string{filepath.Join(serv.src, entry)}
 	result := api.Build(serv.buildOptions)
+	for _, err := range result.Errors {
+		logger.Warn(err.Text)
+	}
 	var outfile string
 	for _, file := range result.OutputFiles {
 		if filepath.Ext(file.Path) != "map" {
