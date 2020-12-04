@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "prebuild": "yarn",
+    "prebuild": "yarn install --silent",
     "build": "sorvor --loader:.js=jsx --jsx-factory=h",
     "prod": "yarn build --minify --sourcemap=external",
     "start": "yarn build --dev"
