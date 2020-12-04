@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "yarn",
-    "build": "sorvor --loader:.js=jsx --jsx-factory=h ",
+    "build": "sorvor --loader:.js=jsx --jsx-factory=h",
     "prod": "yarn build --minify --sourcemap=external",
     "start": "yarn build --dev"
   },
