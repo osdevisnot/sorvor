@@ -2,7 +2,7 @@ clean:
 	@git clean -fdX
 
 upgrade:
-	@go get -u  ./...
+	@go get -t -u  ./...
 
 build: main.go
 	@go build -o /usr/local/bin/sorvor
