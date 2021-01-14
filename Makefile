@@ -18,7 +18,7 @@ release:
 	@make test && \
 	printf "current version: " && git describe --tags --abbrev=0
 	@read -p "enter new version: " version; git tag v$$version
-	@git push --tags &&
+	@git push --tags && \
 	@make verify
 
 verify:
