@@ -21,11 +21,13 @@ import (
 // Snippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
 //		<script>{{ LiveReload.Snippet }}</script>
 const Snippet = `
+<script>
 	const source = new EventSource('/livereload');
 	const reload = () => location.reload(true);
 	source.onmessage = reload;
 	source.onerror = () => (source.onopen = reload);
 	console.log('[sørvør] listening for file changes');
+</script>
 `
 
 // LiveReload keeps track of connected browser clients and broadcasts messages to them

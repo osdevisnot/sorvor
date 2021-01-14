@@ -117,7 +117,10 @@ func (serv *sorvor) build(pkg npm) []string {
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
 		"livereload": func() template.JS {
-			return template.JS(livereload.Snippet)
+			if serv.dev == true {
+				return template.JS(livereload.Snippet)
+			}
+			return ""
 		},
 		"esbuild": func(entry string) string {
 			if serv.dev == true {

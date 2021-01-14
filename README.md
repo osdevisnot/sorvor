@@ -63,7 +63,7 @@ To enable livereload functionality, use `livereload` function in the index file
 Example:
 
 ```
-<script>{{ livereload }}</script>
+{{ livereload }}
 ```
 
 ## :anger: Configuration
