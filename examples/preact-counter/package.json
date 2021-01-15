@@ -5,8 +5,8 @@
   "scripts": {
     "prebuild": "yarn install --silent",
     "build": "sorvor --loader:.js=jsx --jsx-factory=h",
-    "prod": "yarn build --minify --sourcemap=external",
-    "start": "yarn build --dev"
+    "prod": "yarn build --minify --sourcemap=external src/counter.js",
+    "start": "yarn build --dev public/index.html"
   },
   "dependencies": {
     "preact": "^10.5.7"

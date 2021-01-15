@@ -20,7 +20,7 @@ import (
 type sorvor struct {
 	buildOptions api.BuildOptions
 	serveOptions api.ServeOptions
-	src          string
+	entry        string
 	port         string
 	dev          bool
 }
@@ -47,8 +47,6 @@ func readOptions(pkg npm) *sorvor {
 
 	for _, arg := range osArgs {
 		switch {
-		case strings.HasPrefix(arg, "--src"):
-			serv.src = arg[len("--src="):]
 		case strings.HasPrefix(arg, "--port"):
 			port, err := strconv.Atoi(arg[len("--port="):])
 			logger.Fatal(err, "Invalid Port Value")
@@ -56,6 +54,8 @@ func readOptions(pkg npm) *sorvor {
 			serv.serveOptions.Port = uint16(port + 1)
 		case arg == "--dev":
 			serv.dev = true
+		case !strings.HasPrefix(arg, "--"):
+			serv.entry = arg
 		default:
 			esbuildArgs = append(esbuildArgs, arg)
 		}
@@ -74,8 +74,11 @@ func readOptions(pkg npm) *sorvor {
 	if serv.buildOptions.Outdir == "" {
 		serv.buildOptions.Outdir = "dist"
 	}
-	if serv.src == "" {
-		serv.src = "src"
+	if serv.buildOptions.Format == api.FormatDefault {
+		serv.buildOptions.Format = api.FormatESModule
+	}
+	if serv.entry == "" {
+		serv.entry = "public/index.html"
 	}
 	return serv
 }
@@ -93,7 +96,7 @@ func readPkg() npm {
 }
 
 func (serv *sorvor) esbuild(entry string) string {
-	serv.buildOptions.EntryPoints = []string{filepath.Join(serv.src, entry)}
+	serv.buildOptions.EntryPoints = []string{entry}
 	result := api.Build(serv.buildOptions)
 	for _, err := range result.Errors {
 		logger.Warn(err.Text)
@@ -110,31 +113,36 @@ func (serv *sorvor) esbuild(entry string) string {
 
 func (serv *sorvor) build(pkg npm) []string {
 
-	srcIndex := filepath.Join(serv.src, "index.html")
-	targetIndex := filepath.Join(serv.buildOptions.Outdir, "index.html")
+	target := filepath.Join(serv.buildOptions.Outdir, "index.html")
 
 	var entries []string
+	if _, err := os.Stat(serv.entry); err != nil {
+		logger.Fatal(err, "Entry file does not exist. ", serv.entry)
+	}
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
-		"livereload": func() template.JS {
+		"livereload": func() template.HTML {
 			if serv.dev == true {
-				return template.JS(livereload.Snippet)
+				return template.HTML(livereload.Snippet)
 			}
 			return ""
 		},
 		"esbuild": func(entry string) string {
 			if serv.dev == true {
-				entries = append(entries, filepath.Join(serv.src, entry))
 				ext := path.Ext(entry)
 				outfile := entry[0:len(entry)-len(ext)] + extensions[ext]
+				entry = filepath.Join(filepath.Dir(serv.entry), entry)
+				entries = append(entries, entry)
 				return "http://localhost:" + strconv.Itoa(int(serv.serveOptions.Port)) + "/" + outfile
+			} else {
+				entry = filepath.Join(filepath.Dir(serv.entry), entry)
 			}
 			return serv.esbuild(entry)
 		},
-	}).ParseFiles(srcIndex)
+	}).ParseFiles(serv.entry)
 	logger.Fatal(err, "Unable to parse index.html")
 
-	file, err := os.Create(targetIndex)
+	file, err := os.Create(target)
 	logger.Fatal(err, "Unable to create index.html in outdir")
 	defer file.Close()
 
@@ -182,7 +190,7 @@ func (serv *sorvor) serve(pkg npm) {
 	go func() {
 		logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://localhost", serv.port))
 
-		liveReload := livereload.New(serv.src)
+		liveReload := livereload.New(filepath.Dir(serv.entry))
 		liveReload.Start()
 		http.Handle("/livereload", liveReload)
 
@@ -205,6 +213,8 @@ func main() {
 
 	if serv.dev == true {
 		serv.serve(pkg)
+	} else if filepath.Ext(serv.entry) != ".html" {
+		serv.esbuild(serv.entry)
 	} else {
 		serv.build(pkg)
 	}

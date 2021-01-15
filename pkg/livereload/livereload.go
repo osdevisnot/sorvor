@@ -1,6 +1,6 @@
 // Package livereload implements HTML5 Server Side Events to live reload connected browsers
 // Usage: first start the livereload instance
-//		liveReload := livereload.New(serv.src)
+//		liveReload := livereload.New(root)
 //		liveReload.Start()
 // then, install an HTTP handler on desired path
 //		http.Handle("/livereload", liveReload)
@@ -20,15 +20,7 @@ import (
 
 // Snippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
 //		<script>{{ LiveReload.Snippet }}</script>
-const Snippet = `
-<script>
-	const source = new EventSource('/livereload');
-	const reload = () => location.reload(true);
-	source.onmessage = reload;
-	source.onerror = () => (source.onopen = reload);
-	console.log('[sørvør] listening for file changes');
-</script>
-`
+const Snippet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.log('[sørvør] listening for file changes');</script>`
 
 // LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {
