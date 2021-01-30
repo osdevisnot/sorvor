@@ -3,6 +3,7 @@ package main
 
 import (
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -208,7 +209,11 @@ func main() {
 	pkg := readPkg()
 	serv := readOptions(pkg)
 
-	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
+	dir, err := ioutil.ReadDir(serv.buildOptions.Outdir)
+	for _, d := range dir {
+		os.RemoveAll(path.Join([]string{serv.buildOptions.Outdir, d.Name()}...))
+	}
+	err = os.MkdirAll(serv.buildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
 
 	if serv.dev == true {
