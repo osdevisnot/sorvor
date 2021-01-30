@@ -3,10 +3,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "prebuild": "yarn install --silent",
-    "build": "sorvor --loader:.js=jsx --jsx-factory=h",
-    "prod": "yarn build --minify --sourcemap=external src/counter.js",
-    "start": "yarn build --dev public/index.html"
+    "build": "sorvor src/counter.js --minify --sourcemap=external --loader:.js=jsx --jsx-factory=h",
+    "start": "sorvor public/index.html --dev --loader:.js=jsx --jsx-factory=h"
   },
   "dependencies": {
     "preact": "^10.5.7"

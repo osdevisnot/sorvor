@@ -12,7 +12,7 @@ test:
 	cd ${CURDIR}/examples/minimal && sorvor && \
 	cd ${CURDIR}/examples/minimal-css && sorvor && \
 	cd ${CURDIR}/examples/minimal-typescript && sorvor && \
-	cd ${CURDIR}/examples/preact-counter && npm run prod
+	cd ${CURDIR}/examples/preact-counter && npm install && npm run build
 
 release:
 	@make test && \
@@ -27,4 +27,4 @@ verify:
 	@cd ${CURDIR}/examples/minimal && sorvor && \
 	cd ${CURDIR}/examples/minimal-css && sorvor && \
 	cd ${CURDIR}/examples/minimal-typescript && sorvor && \
-	cd ${CURDIR}/examples/preact-counter && npm run prod
+	cd ${CURDIR}/examples/preact-counter && npm install && npm run build
