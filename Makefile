@@ -7,6 +7,9 @@ upgrade:
 build: main.go
 	@go build -o /usr/local/bin/sorvor
 
+start:
+	@make build && cd ${CURDIR}/examples/preact-counter && npm install && npm run start
+
 test:
 	@make clean && make build && \
 	cd ${CURDIR}/examples/minimal && sorvor && \

@@ -1,21 +1,18 @@
 // Package livereload implements HTML5 Server Side Events to live reload connected browsers
 // Usage: first start the livereload instance
-//		liveReload := livereload.New(root)
+//		liveReload := livereload.New()
 //		liveReload.Start()
 // then, install an HTTP handler on desired path
 //		http.Handle("/livereload", liveReload)
+// then, reload the connected browsers
+//      liveReload.Reload()
 // The target browser must support HTML5 Server Side Events.
 package livereload
 
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
-
-	"github.com/osdevisnot/sorvor/pkg/logger"
-	"github.com/radovskyb/watcher"
 )
 
 // Snippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
@@ -28,16 +25,10 @@ type LiveReload struct {
 	incoming chan chan string     // channel to push new clients
 	outgoing chan chan string     // channel to push disconnected clients
 	messages chan string          // channel to publish new messages
-	root     string               // root directory to watch
 }
 
 // Start manages connections and broadcasts messages to connected clients
 func (livereload *LiveReload) Start() {
-	cwd, _ := os.Getwd()
-	notify := watcher.New()
-	notify.SetMaxEvents(1)
-	logger.Fatal(notify.AddRecursive(livereload.root), "Error watching root directory")
-
 	go func() {
 		for {
 			select {
@@ -63,25 +54,10 @@ func (livereload *LiveReload) Start() {
 			time.Sleep(time.Minute)
 		}
 	}()
+}
 
-	go func() {
-		for {
-			select {
-			case event := <-notify.Event:
-				relative, _ := filepath.Rel(filepath.Join(cwd, livereload.root), event.Path)
-				logger.Info("Reloading Clients - File Changed -", logger.BlueText(relative))
-				livereload.messages <- "reload"
-			case err := <-notify.Error:
-				logger.Error(err, "Error Watching Files")
-			case <-notify.Closed:
-				return
-			}
-		}
-	}()
-
-	go func() {
-		logger.Fatal(notify.Start(time.Millisecond*100), "Failed watching files")
-	}()
+func (livereload *LiveReload) Reload() {
+	livereload.messages <- "reload"
 }
 
 // sendEvent is helper to create formatted SSE events based on message data.
@@ -145,13 +121,12 @@ func (livereload *LiveReload) ServeHTTP(res http.ResponseWriter, req *http.Reque
 }
 
 // New creates a new LiveReload struct
-func New(root string) *LiveReload {
+func New() *LiveReload {
 	livereload := &LiveReload{
 		clients:  make(map[chan string]bool),
 		incoming: make(chan (chan string)),
 		outgoing: make(chan (chan string)),
 		messages: make(chan string),
-		root:     root,
 	}
 
 	return livereload

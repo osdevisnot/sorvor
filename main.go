@@ -130,11 +130,8 @@ func (serv *sorvor) build(pkg npm) []string {
 		},
 		"esbuild": func(entry string) string {
 			if serv.dev == true {
-				ext := path.Ext(entry)
-				outfile := entry[0:len(entry)-len(ext)] + extensions[ext]
 				entry = filepath.Join(filepath.Dir(serv.entry), entry)
 				entries = append(entries, entry)
-				return "http://localhost:" + strconv.Itoa(int(serv.serveOptions.Port)) + "/" + outfile
 			} else {
 				entry = filepath.Join(filepath.Dir(serv.entry), entry)
 			}
@@ -173,25 +170,29 @@ func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 }
 
 func (serv *sorvor) serve(pkg npm) {
-	serv.buildOptions.EntryPoints = serv.build(pkg)
-
+	liveReload := livereload.New()
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
-	// start esbuild server
+	// start esbuild in watch mode
 	go func() {
-		_, err := api.Serve(serv.serveOptions, serv.buildOptions)
-		if err != nil {
-			logger.Error(err, "Failed to start esbuild server")
-			wg.Done()
+		serv.buildOptions.Watch = &api.WatchMode{
+			OnRebuild: func(result api.BuildResult) {
+				for _, err := range result.Errors {
+					logger.Warn(err.Text)
+				}
+				// send livereload message to connected clients
+				liveReload.Reload()
+			},
 		}
+		serv.build(pkg)
 	}()
 
 	// start our own server
 	go func() {
 		logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://localhost", serv.port))
 
-		liveReload := livereload.New(filepath.Dir(serv.entry))
+		liveReload := livereload.New()
 		liveReload.Start()
 		http.Handle("/livereload", liveReload)
 
@@ -199,7 +200,6 @@ func (serv *sorvor) serve(pkg npm) {
 
 		err := http.ListenAndServe(serv.port, nil)
 		logger.Error(err, "Failed to start http server")
-		wg.Done()
 	}()
 
 	wg.Wait()
