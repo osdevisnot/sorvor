@@ -171,6 +171,7 @@ func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 
 func (serv *sorvor) serve(pkg npm) {
 	liveReload := livereload.New()
+	liveReload.Start()
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
@@ -192,8 +193,6 @@ func (serv *sorvor) serve(pkg npm) {
 	go func() {
 		logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://localhost", serv.port))
 
-		liveReload := livereload.New()
-		liveReload.Start()
 		http.Handle("/livereload", liveReload)
 
 		http.Handle("/", serv)
