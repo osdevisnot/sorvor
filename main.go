@@ -3,10 +3,8 @@ package main
 
 import (
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -29,14 +27,6 @@ type sorvor struct {
 type npm struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
-}
-
-var extensions = map[string]string{
-	".js":  ".js",
-	".ts":  ".js",
-	".jsx": ".js",
-	".tsx": ".js",
-	".css": ".css",
 }
 
 func readOptions(pkg npm) *sorvor {
@@ -208,11 +198,7 @@ func main() {
 	pkg := readPkg()
 	serv := readOptions(pkg)
 
-	dir, err := ioutil.ReadDir(serv.buildOptions.Outdir)
-	for _, d := range dir {
-		os.RemoveAll(path.Join([]string{serv.buildOptions.Outdir, d.Name()}...))
-	}
-	err = os.MkdirAll(serv.buildOptions.Outdir, 0775)
+	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
 
 	if serv.dev == true {
