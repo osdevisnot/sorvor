@@ -18,7 +18,6 @@ import (
 
 type sorvor struct {
 	buildOptions api.BuildOptions
-	serveOptions api.ServeOptions
 	entry        string
 	port         string
 	dev          bool
@@ -42,7 +41,6 @@ func readOptions(pkg npm) *sorvor {
 			port, err := strconv.Atoi(arg[len("--port="):])
 			logger.Fatal(err, "Invalid Port Value")
 			serv.port = ":" + strconv.Itoa(port)
-			serv.serveOptions.Port = uint16(port + 1)
 		case arg == "--dev":
 			serv.dev = true
 		case !strings.HasPrefix(arg, "--"):
@@ -60,7 +58,6 @@ func readOptions(pkg npm) *sorvor {
 
 	if serv.dev == true && serv.port == "" {
 		serv.port = ":1234"
-		serv.serveOptions.Port = uint16(1235)
 	}
 	if serv.buildOptions.Outdir == "" {
 		serv.buildOptions.Outdir = "dist"
