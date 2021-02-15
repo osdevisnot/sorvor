@@ -7,6 +7,9 @@
 // then, reload the connected browsers
 //      liveReload.Reload()
 // The target browser must support HTML5 Server Side Events.
+// In Chrome and Firefox - there is a limit of 6 active connections per browser + domain.
+// Chromium: https://bugs.chromium.org/p/chromium/issues/detail?id=275955
+// Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=906896
 package livereload
 
 import (
