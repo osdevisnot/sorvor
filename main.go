@@ -56,8 +56,10 @@ func readOptions(pkg npm) *sorvor {
 	serv.buildOptions.Bundle = true
 	serv.buildOptions.Write = true
 
-	if serv.dev == true && serv.port == "" {
-		serv.port = ":1234"
+	if serv.dev == true {
+		if serv.port == "" {
+			serv.port = ":1234"
+		}
 		serv.buildOptions.Define = map[string]string{"process.env.NODE_ENV": "'development'"}
 	} else {
 		serv.buildOptions.Define = map[string]string{"process.env.NODE_ENV": "'production'"}
