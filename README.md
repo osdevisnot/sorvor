@@ -40,7 +40,7 @@ To serve an application using a live reloading server, use HTML as entrypoint an
 For example:
 
 ```bash
-sorvor --dev public/index.html
+sorvor public/index.html --dev
 ```
 
 ### Build Applications for Production
@@ -93,11 +93,10 @@ Example:
 
 For most part, `sørvør` tries to use sensible defaults, but you can configure the behaviour using command line arguments below:
 
-| cli argument  | description                 | default value       |
-| ------------- | --------------------------- | ------------------- |
-| `--entry=...` | source directory for sørvør | `public/index.html` |
-| `--port=...`  | port for sørvør             | `1234`              |
-| `--dev`       | enable development mode     | `false`             |
+| cli argument | description             | default value |
+| ------------ | ----------------------- | ------------- |
+| `--port=...` | port for sørvør         | `1234`        |
+| `--dev`      | enable development mode | `false`       |
 
 `sørvør` forwards all the other command line arguments to `esbuild`.
 
@@ -106,29 +105,29 @@ Please refer documentation for [simple esbuild options](https://esbuild.github.i
 For example, to use `esbuild` with modern `esm` format, use a command like this:
 
 ```bash
-sorvor --format=esm --dev
+sorvor --dev --format=esm
 ```
 
 `sørvør` configures below values for esbuild as defaults:
 
-| cli argument   | description                          | default value                     |
-| -------------- | ------------------------------------ | --------------------------------- |
-| `--bundle`     | enables bundling output files        | `true`                            |
-| `--write`      | enables writing built output to disk | `true`                            |
-| `--port=...`   | port to start esbuild in serve mode  | `1235` (if --dev mode is enabled) |
-| `--outdir=...` | target directory for esbuild output  | `dist`                            |
+| cli argument   | description                          | default value |
+| -------------- | ------------------------------------ | ------------- |
+| `--bundle`     | enables bundling output files        | `true`        |
+| `--write`      | enables writing built output to disk | `true`        |
+| `--port=...`   | port to start live reload server     | `1234`        |
+| `--outdir=...` | target directory for esbuild output  | `dist`        |
 
 ## :hatching_chick: Motivations/Inspirations
 
 `sørvør` started with desire to simplify frontend tooling, with strong focus on speed of execution. It uses `esbuild` for bundling modern javascript and typescript syntax to a lower target. The idea here is to implement features that `esbuild` deems as out of scope, but are necessary for a decent development environment.
 
-This project is inspired by [servør](https://www.npmjs.com/package/servor) from [Luke Jackson](https://twitter.com/lukejacksonn), which provides similar zero dependency development experience but lacks integration with bundler/build tools. I choose golang to implement this project to solidify my learning of the language and to achieve a zero dependency model.
+This project is inspired by [servør](https://www.npmjs.com/package/servor) from [Luke Jackson](https://twitter.com/lukejacksonn), which provides similar zero dependency development experience but lacks integration with bundler/build tools. I chose golang to implement this project to solidify my learning of the language and to achieve a zero dependency model.
 
 ## :microscope: Roadmap
 
 This project currently lacks some extended features available in [servør](https://www.npmjs.com/package/servor), some of which will be implemented in the future.
 
-I want to avoid implementing features that are already on the roadmap for `esbuild`. The idea is to use esbuild as is without duplicating efforts.
+I also want to avoid implementing features that are already on the roadmap for `esbuild`. The idea is to use esbuild as is without duplicating efforts.
 
 ## :clinking_glasses: License
 
