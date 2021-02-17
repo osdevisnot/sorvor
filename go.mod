@@ -4,7 +4,5 @@ go 1.15
 
 require (
 	github.com/evanw/esbuild v0.8.46
-	github.com/gookit/color v1.3.7
-	github.com/radovskyb/watcher v1.0.7
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
+	golang.org/x/sys v0.0.0-20210216224549-f992740a1bac // indirect
 )
