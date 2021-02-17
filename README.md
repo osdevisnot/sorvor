@@ -109,19 +109,12 @@ Note: `--secure` automatically creates a self signed certificate for provided ho
 
 Please refer documentation for [simple esbuild options](https://esbuild.github.io/api/#simple-options) or [advance options](https://esbuild.github.io/api/#advanced-options) to further customize the bundling process.
 
-For example, to use `esbuild` with modern `esm` format, use a command like this:
-
-```bash
-sorvor --dev --format=esm
-```
-
 `sørvør` configures below values for esbuild as defaults:
 
 | cli argument   | description                          | default value |
 | -------------- | ------------------------------------ | ------------- |
 | `--bundle`     | enables bundling output files        | `true`        |
 | `--write`      | enables writing built output to disk | `true`        |
-| `--port=...`   | port to start live reload server     | `1234`        |
 | `--outdir=...` | target directory for esbuild output  | `dist`        |
 
 ## :hatching_chick: Motivations/Inspirations
