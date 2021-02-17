@@ -9,6 +9,7 @@
 - **Asset Pipeline** - great asset processing with simple primitives.
 - **Live Reloading** - live reload browsers on code change.
 - **Bundle Libraries** - bundle libraries for distribution using JS/TS/JSX/TSX entry points.
+- **Secure Server** - Supports https with trusted self signed certificates.
 
 ### :muscle: Powered By
 
@@ -95,10 +96,16 @@ For most part, `sørvør` tries to use sensible defaults, but you can configure 
 
 | cli argument | description             | default value |
 | ------------ | ----------------------- | ------------- |
+| `--host=...` | host for sørvør         | `localhost`   |
 | `--port=...` | port for sørvør         | `1234`        |
 | `--dev`      | enable development mode | `false`       |
+| `--secure`   | use https in dev mode   | `false`       |
 
-`sørvør` forwards all the other command line arguments to `esbuild`.
+> `sørvør` forwards all the other command line arguments to `esbuild`.
+
+Note: `--secure` automatically creates a self signed certificate for provided host.
+
+> to disable chrome warnings, open chrome://flags/#allow-insecure-localhost and change the setting to "Enabled".
 
 Please refer documentation for [simple esbuild options](https://esbuild.github.io/api/#simple-options) or [advance options](https://esbuild.github.io/api/#advanced-options) to further customize the bundling process.
 

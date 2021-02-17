@@ -12,6 +12,7 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/evanw/esbuild/pkg/cli"
+	"github.com/osdevisnot/sorvor/pkg/authority"
 	"github.com/osdevisnot/sorvor/pkg/livereload"
 	"github.com/osdevisnot/sorvor/pkg/logger"
 )
@@ -19,8 +20,10 @@ import (
 type sorvor struct {
 	buildOptions api.BuildOptions
 	entry        string
+	host         string
 	port         string
 	dev          bool
+	secure       bool
 }
 
 type npm struct {
@@ -37,12 +40,16 @@ func readOptions(pkg npm) *sorvor {
 
 	for _, arg := range osArgs {
 		switch {
+		case strings.HasPrefix(arg, "--host"):
+			serv.host = arg[len("--host="):]
 		case strings.HasPrefix(arg, "--port"):
 			port, err := strconv.Atoi(arg[len("--port="):])
 			logger.Fatal(err, "Invalid Port Value")
 			serv.port = ":" + strconv.Itoa(port)
 		case arg == "--dev":
 			serv.dev = true
+		case arg == "--secure":
+			serv.secure = true
 		case !strings.HasPrefix(arg, "--"):
 			serv.entry = arg
 		default:
@@ -72,6 +79,9 @@ func readOptions(pkg npm) *sorvor {
 	}
 	if serv.entry == "" {
 		serv.entry = "public/index.html"
+	}
+	if serv.host == "" {
+		serv.host = "localhost"
 	}
 	return serv
 }
@@ -183,14 +193,22 @@ func (serv *sorvor) serve(pkg npm) {
 
 	// start our own server
 	go func() {
-		logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://localhost", serv.port))
-
 		http.Handle("/livereload", liveReload)
-
 		http.Handle("/", serv)
 
-		err := http.ListenAndServe(serv.port, nil)
-		logger.Error(err, "Failed to start http server")
+		if serv.secure {
+			// generate self signed certs
+			if _, err := os.Stat("key.pem"); os.IsNotExist(err) {
+				authority.GenerateKeyPair(serv.host)
+			}
+			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.host, serv.port))
+			err := http.ListenAndServeTLS(serv.port, "cert.pem", "key.pem", nil)
+			logger.Error(err, "Failed to start https server")
+		} else {
+			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://", serv.host, serv.port))
+			err := http.ListenAndServe(serv.port, nil)
+			logger.Error(err, "Failed to start http server")
+		}
 	}()
 
 	wg.Wait()
