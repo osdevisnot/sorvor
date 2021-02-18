@@ -1,13 +1,14 @@
 {
-	"name": "react-counter",
-	"private": true,
-	"license": "MIT",
-	"scripts": {
-		"build": "sorvor public/index.html --loader:.js=jsx --minify --sourcemap=external",
-		"start": "sorvor public/index.html --loader:.js=jsx --dev"
-	},
-	"dependencies": {
-		"react": "^17.0.1",
-		"react-dom": "^17.0.1"
-	}
+  "name": "react-counter",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "sorvor public/index.html --loader:.js=jsx --minify --sourcemap",
+    "start": "sorvor public/index.html --loader:.js=jsx --serve",
+    "dist": "sorvor src/counter.js --minify --sourcemap"
+  },
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
 }
