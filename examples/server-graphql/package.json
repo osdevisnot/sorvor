@@ -1,0 +1,17 @@
+{
+  "name": "server-graphql",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "sorvor src/server.js --platform=node",
+    "start": "sorvor src/server.js --platform=node --serve"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "apollo-server-express": "^2.21.0",
+    "graphql-tools": "^7.0.4",
+    "graphql": "^15.5.0",
+    "@apollo/client": "^3.3.11"
+  }
+}
