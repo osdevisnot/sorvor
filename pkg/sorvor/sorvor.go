@@ -1,12 +1,7 @@
-// an extremely fast, zero config Server for modern web applications.
+// Package sorvor is an extremely fast, zero config Server for modern web applications.
 package sorvor
 
 import (
-	"github.com/evanw/esbuild/pkg/api"
-	"github.com/osdevisnot/sorvor/pkg/authority"
-	"github.com/osdevisnot/sorvor/pkg/livereload"
-	"github.com/osdevisnot/sorvor/pkg/logger"
-	"github.com/osdevisnot/sorvor/pkg/pkgjson"
 	"html/template"
 	"net/http"
 	"os"
@@ -15,8 +10,15 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+
+	"github.com/evanw/esbuild/pkg/api"
+	"github.com/osdevisnot/sorvor/pkg/authority"
+	"github.com/osdevisnot/sorvor/pkg/livereload"
+	"github.com/osdevisnot/sorvor/pkg/logger"
+	"github.com/osdevisnot/sorvor/pkg/pkgjson"
 )
 
+// Sorvor struct
 type Sorvor struct {
 	BuildOptions api.BuildOptions
 	Entry        string
@@ -26,6 +28,7 @@ type Sorvor struct {
 	Secure       bool
 }
 
+// Esbuild builds a given entrypoint using esbuild
 func (serv *Sorvor) Esbuild(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
 	result := api.Build(serv.BuildOptions)
@@ -42,6 +45,7 @@ func (serv *Sorvor) Esbuild(entry string) (string, api.BuildResult) {
 	return outfile, result
 }
 
+// Run builds an entrypoint and launches the resulting built file using node.js
 func (serv *Sorvor) Run(entry string) {
 	var cmd *exec.Cmd
 	var outfile string
@@ -68,6 +72,8 @@ func (serv *Sorvor) Run(entry string) {
 	wg.Wait()
 }
 
+// Build walks the index.html, collect all the entries from <script...></script> and <link .../> tags
+// it then runs it through esbuild and replaces the references in index.html with new paths
 func (serv *Sorvor) Build(pkg *pkgjson.PkgJSON) []string {
 
 	target := filepath.Join(serv.BuildOptions.Outdir, "index.html")
@@ -107,6 +113,7 @@ func (serv *Sorvor) Build(pkg *pkgjson.PkgJSON) []string {
 	return entries
 }
 
+// ServeHTTP is an http server handler for sorvor
 func (serv *Sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	res.Header().Set("access-control-allow-origin", "*")
 	root := filepath.Join(serv.BuildOptions.Outdir, filepath.Clean(request.URL.Path))
@@ -126,6 +133,7 @@ func (serv *Sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	return
 }
 
+// Server launches esbuild in watch mode and live reloads all connected browsers
 func (serv *Sorvor) Server(pkg *pkgjson.PkgJSON) {
 	liveReload := livereload.New()
 	liveReload.Start()
