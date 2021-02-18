@@ -22,7 +22,7 @@ type sorvor struct {
 	entry        string
 	host         string
 	port         string
-	dev          bool
+	serve        bool
 	secure       bool
 }
 
@@ -46,8 +46,8 @@ func readOptions(pkg npm) *sorvor {
 			port, err := strconv.Atoi(arg[len("--port="):])
 			logger.Fatal(err, "Invalid Port Value")
 			serv.port = ":" + strconv.Itoa(port)
-		case arg == "--dev":
-			serv.dev = true
+		case arg == "--serve":
+			serv.serve = true
 		case arg == "--secure":
 			serv.secure = true
 		case !strings.HasPrefix(arg, "--"):
@@ -63,7 +63,7 @@ func readOptions(pkg npm) *sorvor {
 	serv.buildOptions.Bundle = true
 	serv.buildOptions.Write = true
 
-	if serv.dev == true {
+	if serv.serve == true {
 		if serv.port == "" {
 			serv.port = ":1234"
 		}
@@ -125,13 +125,13 @@ func (serv *sorvor) build(pkg npm) []string {
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
 		"livereload": func() template.HTML {
-			if serv.dev == true {
+			if serv.serve == true {
 				return template.HTML(livereload.JsSnippeet)
 			}
 			return ""
 		},
 		"esbuild": func(entry string) string {
-			if serv.dev == true {
+			if serv.serve == true {
 				entry = filepath.Join(filepath.Dir(serv.entry), entry)
 				entries = append(entries, entry)
 			} else {
@@ -171,7 +171,7 @@ func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	return
 }
 
-func (serv *sorvor) serve(pkg npm) {
+func (serv *sorvor) server(pkg npm) {
 	liveReload := livereload.New()
 	liveReload.Start()
 	wg := new(sync.WaitGroup)
@@ -221,8 +221,8 @@ func main() {
 	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
 
-	if serv.dev == true {
-		serv.serve(pkg)
+	if serv.serve == true {
+		serv.server(pkg)
 	} else if filepath.Ext(serv.entry) != ".html" {
 		serv.esbuild(serv.entry)
 	} else {

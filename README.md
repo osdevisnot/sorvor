@@ -36,12 +36,12 @@ You can use `sørvør` as a local development server or as a build tool for your
 
 ### Live Reloading Server
 
-To serve an application using a live reloading server, use HTML as entrypoint and `--dev` command line argument.
+To serve an application using a live reloading server, use HTML as entrypoint and `--serve` command line argument.
 
 For example:
 
 ```bash
-sorvor public/index.html --dev
+sorvor public/index.html --serve
 ```
 
 ### Build Applications for Production
@@ -98,7 +98,7 @@ For most part, `sørvør` tries to use sensible defaults, but you can configure 
 | ------------ | ----------------------- | ------------- |
 | `--host=...` | host for sørvør         | `localhost`   |
 | `--port=...` | port for sørvør         | `1234`        |
-| `--dev`      | enable development mode | `false`       |
+| `--serve`    | enable development mode | `false`       |
 | `--secure`   | use https in dev mode   | `false`       |
 
 > `sørvør` forwards all the other command line arguments to `esbuild`.
