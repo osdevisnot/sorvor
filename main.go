@@ -20,12 +20,12 @@ import (
 )
 
 type sorvor struct {
-	buildOptions api.BuildOptions
-	entry        string
-	host         string
-	port         string
-	serve        bool
-	secure       bool
+	BuildOptions api.BuildOptions
+	Entry        string
+	Host         string
+	Port         string
+	Serve        bool
+	Secure       bool
 }
 
 func readOptions(pkg *pkgjson.PkgJSON) *sorvor {
@@ -38,54 +38,54 @@ func readOptions(pkg *pkgjson.PkgJSON) *sorvor {
 	for _, arg := range osArgs {
 		switch {
 		case strings.HasPrefix(arg, "--host"):
-			serv.host = arg[len("--host="):]
+			serv.Host = arg[len("--host="):]
 		case strings.HasPrefix(arg, "--port"):
 			port, err := strconv.Atoi(arg[len("--port="):])
-			logger.Fatal(err, "Invalid Port Value")
-			serv.port = ":" + strconv.Itoa(port)
+			logger.Fatal(err, "invalid port value")
+			serv.Port = ":" + strconv.Itoa(port)
 		case arg == "--serve":
-			serv.serve = true
+			serv.Serve = true
 		case arg == "--secure":
-			serv.secure = true
+			serv.Secure = true
 		case !strings.HasPrefix(arg, "--"):
-			serv.entry = arg
+			serv.Entry = arg
 		default:
 			esbuildArgs = append(esbuildArgs, arg)
 		}
 	}
 
-	serv.buildOptions, err = cli.ParseBuildOptions(esbuildArgs)
+	serv.BuildOptions, err = cli.ParseBuildOptions(esbuildArgs)
 	logger.Fatal(err, "Invalid option for esbuild")
 
-	serv.buildOptions.Bundle = true
-	serv.buildOptions.Write = true
+	serv.BuildOptions.Bundle = true
+	serv.BuildOptions.Write = true
 
-	if serv.serve == true {
-		if serv.port == "" {
-			serv.port = ":1234"
+	if serv.Serve == true {
+		if serv.Port == "" {
+			serv.Port = ":1234"
 		}
-		serv.buildOptions.Define = map[string]string{"process.env.NODE_ENV": "'development'"}
+		serv.BuildOptions.Define = map[string]string{"process.env.NODE_ENV": "'development'"}
 	} else {
-		serv.buildOptions.Define = map[string]string{"process.env.NODE_ENV": "'production'"}
+		serv.BuildOptions.Define = map[string]string{"process.env.NODE_ENV": "'production'"}
 	}
-	if serv.buildOptions.Outdir == "" {
-		serv.buildOptions.Outdir = "dist"
+	if serv.BuildOptions.Outdir == "" {
+		serv.BuildOptions.Outdir = "dist"
 	}
-	if serv.buildOptions.Format == api.FormatDefault {
-		serv.buildOptions.Format = api.FormatESModule
+	if serv.BuildOptions.Format == api.FormatDefault {
+		serv.BuildOptions.Format = api.FormatESModule
 	}
-	if serv.entry == "" {
-		serv.entry = "public/index.html"
+	if serv.Entry == "" {
+		serv.Entry = "public/index.html"
 	}
-	if serv.host == "" {
-		serv.host = "localhost"
+	if serv.Host == "" {
+		serv.Host = "localhost"
 	}
 	return serv
 }
 
 func (serv *sorvor) esbuild(entry string) string {
-	serv.buildOptions.EntryPoints = []string{entry}
-	result := api.Build(serv.buildOptions)
+	serv.BuildOptions.EntryPoints = []string{entry}
+	result := api.Build(serv.BuildOptions)
 	for _, err := range result.Errors {
 		logger.Warn(err.Text)
 	}
@@ -93,7 +93,7 @@ func (serv *sorvor) esbuild(entry string) string {
 	for _, file := range result.OutputFiles {
 		if filepath.Ext(file.Path) != "map" {
 			cwd, _ := os.Getwd()
-			outfile = strings.TrimPrefix(file.Path, filepath.Join(cwd, serv.buildOptions.Outdir))
+			outfile = strings.TrimPrefix(file.Path, filepath.Join(cwd, serv.BuildOptions.Outdir))
 		}
 	}
 	return outfile
@@ -101,30 +101,30 @@ func (serv *sorvor) esbuild(entry string) string {
 
 func (serv *sorvor) build(pkg *pkgjson.PkgJSON) []string {
 
-	target := filepath.Join(serv.buildOptions.Outdir, "index.html")
+	target := filepath.Join(serv.BuildOptions.Outdir, "index.html")
 
 	var entries []string
-	if _, err := os.Stat(serv.entry); err != nil {
-		logger.Fatal(err, "Entry file does not exist. ", serv.entry)
+	if _, err := os.Stat(serv.Entry); err != nil {
+		logger.Fatal(err, "Entry file does not exist. ", serv.Entry)
 	}
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
 		"livereload": func() template.HTML {
-			if serv.serve == true {
+			if serv.Serve == true {
 				return template.HTML(livereload.JsSnippeet)
 			}
 			return ""
 		},
 		"esbuild": func(entry string) string {
-			if serv.serve == true {
-				entry = filepath.Join(filepath.Dir(serv.entry), entry)
+			if serv.Serve == true {
+				entry = filepath.Join(filepath.Dir(serv.Entry), entry)
 				entries = append(entries, entry)
 			} else {
-				entry = filepath.Join(filepath.Dir(serv.entry), entry)
+				entry = filepath.Join(filepath.Dir(serv.Entry), entry)
 			}
 			return serv.esbuild(entry)
 		},
-	}).ParseFiles(serv.entry)
+	}).ParseFiles(serv.Entry)
 	logger.Fatal(err, "Unable to parse index.html")
 
 	file, err := os.Create(target)
@@ -139,19 +139,19 @@ func (serv *sorvor) build(pkg *pkgjson.PkgJSON) []string {
 
 func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	res.Header().Set("access-control-allow-origin", "*")
-	root := filepath.Join(serv.buildOptions.Outdir, filepath.Clean(request.URL.Path))
+	root := filepath.Join(serv.BuildOptions.Outdir, filepath.Clean(request.URL.Path))
 
 	if stat, err := os.Stat(root); err != nil {
-		// serve a root index when root is not found
-		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
+		// Serve a root index when root is not found
+		http.ServeFile(res, request, filepath.Join(serv.BuildOptions.Outdir, "index.html"))
 		return
 	} else if stat.IsDir() {
-		// serve root index when requested root is a directory
-		http.ServeFile(res, request, filepath.Join(serv.buildOptions.Outdir, "index.html"))
+		// Serve root index when requested root is a directory
+		http.ServeFile(res, request, filepath.Join(serv.BuildOptions.Outdir, "index.html"))
 		return
 	}
 
-	// else just serve the file normally...
+	// else just Serve the file normally...
 	http.ServeFile(res, request, root)
 	return
 }
@@ -164,7 +164,7 @@ func (serv *sorvor) server(pkg *pkgjson.PkgJSON) {
 
 	// start esbuild in watch mode
 	go func() {
-		serv.buildOptions.Watch = &api.WatchMode{
+		serv.BuildOptions.Watch = &api.WatchMode{
 			OnRebuild: func(result api.BuildResult) {
 				for _, err := range result.Errors {
 					logger.Warn(err.Text)
@@ -181,17 +181,17 @@ func (serv *sorvor) server(pkg *pkgjson.PkgJSON) {
 		http.Handle("/livereload", liveReload)
 		http.Handle("/", serv)
 
-		if serv.secure {
+		if serv.Secure {
 			// generate self signed certs
 			if _, err := os.Stat("key.pem"); os.IsNotExist(err) {
-				authority.GenerateKeyPair(serv.host)
+				authority.GenerateKeyPair(serv.Host)
 			}
-			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.host, serv.port))
-			err := http.ListenAndServeTLS(serv.port, "cert.pem", "key.pem", nil)
+			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.Host, serv.Port))
+			err := http.ListenAndServeTLS(serv.Port, "cert.pem", "key.pem", nil)
 			logger.Error(err, "Failed to start https server")
 		} else {
-			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://", serv.host, serv.port))
-			err := http.ListenAndServe(serv.port, nil)
+			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://", serv.Host, serv.Port))
+			err := http.ListenAndServe(serv.Port, nil)
 			logger.Error(err, "Failed to start http server")
 		}
 	}()
@@ -208,14 +208,20 @@ func main() {
 
 	serv := readOptions(pkgJSON)
 
-	err = os.MkdirAll(serv.buildOptions.Outdir, 0775)
+	err = os.MkdirAll(serv.BuildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
 
-	if serv.serve == true {
-		serv.server(pkgJSON)
-	} else if filepath.Ext(serv.entry) != ".html" {
-		serv.esbuild(serv.entry)
+	if filepath.Ext(serv.Entry) != ".html" {
+		if serv.Serve == true {
+			serv.run(serv.Entry)
+		} else {
+			serv.esbuild(serv.Entry)
+		}
 	} else {
-		serv.build(pkgJSON)
+		if serv.Serve == true {
+			serv.server(pkgJSON)
+		} else {
+			serv.build(pkgJSON)
+		}
 	}
 }
