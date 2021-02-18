@@ -6,10 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/evanw/esbuild/pkg/cli"
@@ -83,7 +85,7 @@ func readOptions(pkg *pkgjson.PkgJSON) *sorvor {
 	return serv
 }
 
-func (serv *sorvor) esbuild(entry string) string {
+func (serv *sorvor) esbuild(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
 	result := api.Build(serv.BuildOptions)
 	for _, err := range result.Errors {
@@ -96,7 +98,33 @@ func (serv *sorvor) esbuild(entry string) string {
 			outfile = strings.TrimPrefix(file.Path, filepath.Join(cwd, serv.BuildOptions.Outdir))
 		}
 	}
-	return outfile
+	return outfile, result
+}
+
+func (serv *sorvor) run(entry string) {
+	var cmd *exec.Cmd
+	var outfile string
+	var result api.BuildResult
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+
+	var onRebuild = func(result api.BuildResult) {
+		if cmd != nil {
+			err := cmd.Process.Signal(syscall.SIGINT)
+			logger.Fatal(err, "failed to stop ", outfile)
+		}
+		cmd = exec.Command("node", outfile)
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		err := cmd.Start()
+		logger.Fatal(err, "failed to start ", outfile)
+	}
+	// start esbuild in watch mode
+	serv.BuildOptions.Watch = &api.WatchMode{OnRebuild: onRebuild}
+	outfile, result = serv.esbuild(entry)
+	outfile = filepath.Join(serv.BuildOptions.Outdir, outfile)
+	onRebuild(result)
+	wg.Wait()
 }
 
 func (serv *sorvor) build(pkg *pkgjson.PkgJSON) []string {
@@ -122,7 +150,8 @@ func (serv *sorvor) build(pkg *pkgjson.PkgJSON) []string {
 			} else {
 				entry = filepath.Join(filepath.Dir(serv.Entry), entry)
 			}
-			return serv.esbuild(entry)
+			outfile, _ := serv.esbuild(entry)
+			return outfile
 		},
 	}).ParseFiles(serv.Entry)
 	logger.Fatal(err, "Unable to parse index.html")
