@@ -1,4 +1,4 @@
-name: goreleaser
+name: release
 
 on:
   push:
@@ -29,6 +29,7 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      - run: npm publish --no-git-tag-version --from-git
+      - run: npm version --no-git-tag-version --from-git
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

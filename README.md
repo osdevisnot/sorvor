@@ -24,6 +24,12 @@ Use [go binaries](https://gobinaries.com/) to install sørvør:
 curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
 ```
 
+Or, use npm to install sørvør:
+
+```bash
+npm install sorvor
+```
+
 Alternatively, if you have [go](https://golang.org/) installed, use `go get` to install sørvør:
 
 ```bash
