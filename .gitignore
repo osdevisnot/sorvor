@@ -21,6 +21,5 @@ vendor/
 # Project ignores
 dist/
 node_modules
-sorvor
 .idea
 *.pem
