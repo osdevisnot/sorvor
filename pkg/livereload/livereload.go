@@ -7,7 +7,7 @@
 // then, reload the connected browsers
 //      liveReload.Reload()
 // The target browser must support HTML5 Server Side Events.
-// In Chrome and Firefox - there is a limit of 6 active connections per browser + domain.
+// Note: In Chrome and Firefox - there is a limit of 6 active connections per browser + domain.
 // Chromium: https://bugs.chromium.org/p/chromium/issues/detail?id=275955
 // Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=906896
 package livereload
@@ -18,9 +18,9 @@ import (
 	"time"
 )
 
-// Snippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
-//		<script>{{ LiveReload.Snippet }}</script>
-const Snippet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.log('[sørvør] listening for file changes');</script>`
+// JsSnippeet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
+//		<script>{{ LiveReload.JsSnippeet }}</script>
+const JsSnippeet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.log('[sørvør] listening for file changes');</script>`
 
 // LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {
@@ -59,11 +59,12 @@ func (livereload *LiveReload) Start() {
 	}()
 }
 
+// Reload sends a reload signal to all connected browsers
 func (livereload *LiveReload) Reload() {
 	livereload.messages <- "reload"
 }
 
-// sendEvent is helper to create formatted SSE events based on message data.
+// sendEvent is a helper to create formatted SSE events based on message data.
 func (livereload *LiveReload) sendEvent(res http.ResponseWriter, eventData string) {
 	var eventType string
 

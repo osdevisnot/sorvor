@@ -9,11 +9,12 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"github.com/osdevisnot/sorvor/pkg/logger"
 	"math/big"
 	"net"
 	"os"
 	"time"
+
+	"github.com/osdevisnot/sorvor/pkg/logger"
 )
 
 // GenerateKeyPair generated self signed key and cert
