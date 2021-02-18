@@ -8,6 +8,9 @@
     "postinstall": "go-npm install",
     "preuninstall": "go-npm uninstall"
   },
+  "files": [
+    "bin"
+  ],
   "dependencies": {
     "go-npm": "^0.1.9"
   },

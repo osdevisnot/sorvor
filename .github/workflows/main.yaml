@@ -29,6 +29,6 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      - run: npm publish --no-git-tag-version from-git
+      - run: npm publish --no-git-tag-version --from-git
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
