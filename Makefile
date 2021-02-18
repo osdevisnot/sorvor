@@ -19,7 +19,7 @@ test:
 	@make clean && make build && \
 	for dir in $(EXAMPLES_MINIMAL); do cd $$dir; sorvor; cd ${CURDIR}; done
 	for dir in $(EXAMPLES_NPM); do cd $${dir}; yarn install --silent --no-lockfile; yarn build; cd ${CURDIR}; done
-	
+
 release:
 	@make test && \
 	printf "current version: " && git describe --tags `git rev-list --tags --max-count=1`
