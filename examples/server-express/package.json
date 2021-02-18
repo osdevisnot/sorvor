@@ -1,0 +1,12 @@
+{
+  "name": "erver-express",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "sorvor src/server.js --platform=node",
+    "start": "sorvor src/server.js --platform=node --serve"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
