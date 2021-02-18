@@ -23,7 +23,7 @@ test:
 release:
 	@make test && \
 	printf "current version: " && git describe --tags `git rev-list --tags --max-count=1`
-	@read -p "enter new version: " version; git tag v$$version
+	@read -p "enter new version: " version; git tag v$$version -m "publish $$version"
 	@git push
 	@git push --tags
 	@make verify
