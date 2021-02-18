@@ -3,6 +3,7 @@ package main
 
 import (
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -15,6 +16,7 @@ import (
 	"github.com/osdevisnot/sorvor/pkg/authority"
 	"github.com/osdevisnot/sorvor/pkg/livereload"
 	"github.com/osdevisnot/sorvor/pkg/logger"
+	"github.com/osdevisnot/sorvor/pkg/pkgjson"
 )
 
 type sorvor struct {
@@ -26,12 +28,7 @@ type sorvor struct {
 	secure       bool
 }
 
-type npm struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-}
-
-func readOptions(pkg npm) *sorvor {
+func readOptions(pkg *pkgjson.PkgJSON) *sorvor {
 	var err error
 	var esbuildArgs []string
 
@@ -86,18 +83,6 @@ func readOptions(pkg npm) *sorvor {
 	return serv
 }
 
-func readPkg() npm {
-	pkg := npm{}
-
-	// file, err := ioutil.ReadFile("package.json")
-	// handleError("Unable to read package.json", err, false)
-
-	// err = json.Unmarshal(file, &pkg)
-	// handleError("Unable to parse package.json", err, false)
-
-	return pkg
-}
-
 func (serv *sorvor) esbuild(entry string) string {
 	serv.buildOptions.EntryPoints = []string{entry}
 	result := api.Build(serv.buildOptions)
@@ -114,7 +99,7 @@ func (serv *sorvor) esbuild(entry string) string {
 	return outfile
 }
 
-func (serv *sorvor) build(pkg npm) []string {
+func (serv *sorvor) build(pkg *pkgjson.PkgJSON) []string {
 
 	target := filepath.Join(serv.buildOptions.Outdir, "index.html")
 
@@ -171,7 +156,7 @@ func (serv *sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	return
 }
 
-func (serv *sorvor) server(pkg npm) {
+func (serv *sorvor) server(pkg *pkgjson.PkgJSON) {
 	liveReload := livereload.New()
 	liveReload.Start()
 	wg := new(sync.WaitGroup)
@@ -215,17 +200,22 @@ func (serv *sorvor) server(pkg npm) {
 }
 
 func main() {
-	pkg := readPkg()
-	serv := readOptions(pkg)
+	var pkgJSON *pkgjson.PkgJSON
+	pkg, err := ioutil.ReadFile("package.json")
+	if err == nil {
+		pkgJSON, err = pkgjson.Parse(pkg)
+	}
 
-	err := os.MkdirAll(serv.buildOptions.Outdir, 0775)
+	serv := readOptions(pkgJSON)
+
+	err = os.MkdirAll(serv.buildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
 
 	if serv.serve == true {
-		serv.server(pkg)
+		serv.server(pkgJSON)
 	} else if filepath.Ext(serv.entry) != ".html" {
 		serv.esbuild(serv.entry)
 	} else {
-		serv.build(pkg)
+		serv.build(pkgJSON)
 	}
 }
