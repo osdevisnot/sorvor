@@ -19,10 +19,13 @@
 vendor/
 
 # Project ignores
-dist/
+dist
 node_modules
 .idea/*.iws
 .idea/workspace.xml
 .idea/tasks.xml
 *.pem
 *.tgz
+sorvor
+!npm/sorvor
+!npm/sorvor/sorvor
