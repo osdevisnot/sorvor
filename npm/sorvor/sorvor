@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+throw new Error(`Invalid binary for sørvør.`);
