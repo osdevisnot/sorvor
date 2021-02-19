@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+console.error("Invalid binary for sorvor. Please check you can connect to github.com and retry this installation")
