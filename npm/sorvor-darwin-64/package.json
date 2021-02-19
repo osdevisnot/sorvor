@@ -1,6 +1,6 @@
 {
   "name": "sorvor-darwin-64",
-  "version": "0.0.0-development",
+  "version": "0.2.16",
   "description": "extremely fast, zero config server for modern web applications.",
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
