@@ -1,5 +1,7 @@
 # preact-counter
 
+This example demonstrates a simple preact-counter using sørvør as build system.
+
 ## prerequisites
 
 sørvør should be installed, preferably using Use [go binaries](https://gobinaries.com/):

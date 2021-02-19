@@ -1,5 +1,7 @@
 # react-counter
 
+This example demonstrates a simple react-counter using sørvør as build system.
+
 ## prerequisites
 
 sørvør should be installed, preferably using Use [go binaries](https://gobinaries.com/):
