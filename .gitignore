@@ -21,6 +21,8 @@ vendor/
 # Project ignores
 dist/
 node_modules
-.idea
+.idea/*.iws
+.idea/workspace.xml
+.idea/tasks.xml
 *.pem
 *.tgz
