@@ -2,6 +2,9 @@
 
 > extremely fast, zero config server for modern web applications.
 
+> Note: sørvør is under heavy development and might not be ready for production.
+> That said, I am actively working on project and expect it to be stable soon.
+
 ## :sparkles: Features
 
 - **Flexible EntryPoints** - use HTML, CSS or JS as entry point for your application.
