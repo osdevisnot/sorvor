@@ -7,6 +7,7 @@ clean:
 	@git clean -fdX
 
 upgrade:
+	@rm go.sum
 	@go get -t -u  ./...
 
 build: main.go
