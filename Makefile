@@ -38,8 +38,7 @@ release:
 	node scripts/version.js $$version; \
 	git commit -am "publish $$version"; \
 	git tag -a v$$version -m "publish $$version"; \
-	@git push && \
-	@git push --tags && \
+	git push && git push --tags
 	@make verify
 
 verify:

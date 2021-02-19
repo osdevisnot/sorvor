@@ -5,9 +5,6 @@
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
   "author": "osdevisnot <osdevisnot@gmail.com>",
-  "bin": {
-    "sorvor": "sorvor"
-  },
   "optionalDependencies": {
     "sorvor-darwin-64": "0.2.16",
     "sorvor-darwin-arm64": "0.2.16",
