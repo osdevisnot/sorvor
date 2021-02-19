@@ -1,6 +1,6 @@
-// Package authority helps creating a self signed key and certs for TLS server
+// Package cert helps creating a self signed key and certs for TLS server
 // Note: Adopted from https://golang.org/src/crypto/tls/generate_cert.go
-package authority
+package cert
 
 import (
 	"crypto/ecdsa"

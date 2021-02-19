@@ -12,7 +12,7 @@ import (
 	"syscall"
 
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/osdevisnot/sorvor/pkg/authority"
+	"github.com/osdevisnot/sorvor/pkg/cert"
 	"github.com/osdevisnot/sorvor/pkg/livereload"
 	"github.com/osdevisnot/sorvor/pkg/logger"
 	"github.com/osdevisnot/sorvor/pkg/pkgjson"
@@ -162,7 +162,7 @@ func (serv *Sorvor) Server(pkg *pkgjson.PkgJSON) {
 		if serv.Secure {
 			// generate self signed certs
 			if _, err := os.Stat("key.pem"); os.IsNotExist(err) {
-				authority.GenerateKeyPair(serv.Host)
+				cert.GenerateKeyPair(serv.Host)
 			}
 			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.Host, serv.Port))
 			err := http.ListenAndServeTLS(serv.Port, "cert.pem", "key.pem", nil)
