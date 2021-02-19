@@ -2,15 +2,14 @@
   "name": "sorvor",
   "version": "0.0.0-development",
   "repository": "https://github.com/osdevisnot/sorvor.git",
-  "author": "osdevisnot <osdevisnot@gmail.com>",
   "license": "MIT",
+  "author": "osdevisnot <osdevisnot@gmail.com>",
+  "bin": "bin/sorvor",
+  "files": [],
   "scripts": {
     "postinstall": "go-npm install",
     "preuninstall": "go-npm uninstall"
   },
-  "files": [
-    "bin"
-  ],
   "dependencies": {
     "go-npm": "^0.1.9"
   },
