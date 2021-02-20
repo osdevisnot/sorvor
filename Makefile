@@ -37,7 +37,7 @@ release:
 	@printf "Current Version: " && git describe --tags `git rev-list --tags --max-count=1`
 	@read -p "Enter New Version: " version; make build; \
 	node scripts/version.js $$version; \
-	git commit -am "publish $$version";
+	git commit -am "publish $$version"; \
 	git tag -a v$$version -m "publish $$version"; \
 	git push && git push --tags
 	make verify
