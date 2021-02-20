@@ -30,15 +30,15 @@ start:
 
 test:
 	@make clean && make build && \
-	for dir in $(EXAMPLES_MINIMAL); do cd $$dir; sorvor; cd ${CURDIR}; done
+	for dir in $(EXAMPLES_MINIMAL); do cd ${CURDIR}/$${dir}; sorvor; done
 	for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; yarn install --silent --no-lockfile; yarn build; done
 
 release:
-	printf "current version: " && git describe --tags `git rev-list --tags --max-count=1`
-	read -p "enter new version: " version; make build \
-	node scripts/version.js $(version); \
-	git commit -am "publish $(version)";
-	git tag -a v$(version) -m "publish $(version)"; \
+	@printf "Current Version: " && git describe --tags `git rev-list --tags --max-count=1`
+	@read -p "Enter New Version: " version; make build; \
+	node scripts/version.js $$version; \
+	git commit -am "publish $$version";
+	git tag -a v$$version -m "publish $$version"; \
 	git push && git push --tags
 	make verify
 
