@@ -14,9 +14,7 @@ import (
 	"github.com/osdevisnot/sorvor/pkg/sorvor"
 )
 
-// Version stores current version of sorvor binary.
-// During builds this gets replaced by real version number.
-var Version = "development"
+var version = "development"
 
 func readOptions() *sorvor.Sorvor {
 	var err error
@@ -28,7 +26,7 @@ func readOptions() *sorvor.Sorvor {
 	for _, arg := range osArgs {
 		switch {
 		case strings.HasPrefix(arg, "--version"):
-			logger.Info("sørvør version ", Version)
+			logger.Info("sørvør version", version)
 			os.Exit(0)
 		case strings.HasPrefix(arg, "--host"):
 			serv.Host = arg[len("--host="):]

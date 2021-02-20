@@ -14,16 +14,16 @@ upgrade:
 	@go get -t -u  ./...
 
 build: main.go
-	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-darwin-64/sorvor
-	GOOS=darwin  GOARCH=arm64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-darwin-arm64/sorvor
-	GOOS=freebsd GOARCH=amd64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-freebsd-64/sorvor
-	GOOS=freebsd GOARCH=arm64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-freebsd-arm64/sorvor
-	GOOS=linux   GOARCH=386   go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-linux-32/sorvor
-	GOOS=linux   GOARCH=amd64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-linux-64/sorvor
-	GOOS=linux   GOARCH=arm   go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-linux-arm/sorvor
-	GOOS=linux   GOARCH=arm64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-linux-arm64/sorvor
-	GOOS=windows GOARCH=386   go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-windows-32/sorvor.exe
-	GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.Version=$(version)'" -o npm/sorvor-windows-64/sorvor.exe
+	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-64/sorvor
+	GOOS=darwin  GOARCH=arm64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-arm64/sorvor
+	GOOS=freebsd GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-freebsd-64/sorvor
+	GOOS=freebsd GOARCH=arm64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-freebsd-arm64/sorvor
+	GOOS=linux   GOARCH=386   go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-linux-32/sorvor
+	GOOS=linux   GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-linux-64/sorvor
+	GOOS=linux   GOARCH=arm   go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-linux-arm/sorvor
+	GOOS=linux   GOARCH=arm64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-linux-arm64/sorvor
+	GOOS=windows GOARCH=386   go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-windows-32/sorvor.exe
+	GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-windows-64/sorvor.exe
 
 start:
 	@make build && cd ${CURDIR}/examples/preact-counter && yarn install --silent --no-lockfile && yarn start
