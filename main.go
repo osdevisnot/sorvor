@@ -1,17 +1,22 @@
 package main
 
 import (
-	"github.com/evanw/esbuild/pkg/api"
-	"github.com/evanw/esbuild/pkg/cli"
-	"github.com/osdevisnot/sorvor/pkg/logger"
-	"github.com/osdevisnot/sorvor/pkg/pkgjson"
-	"github.com/osdevisnot/sorvor/pkg/sorvor"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/evanw/esbuild/pkg/api"
+	"github.com/evanw/esbuild/pkg/cli"
+	"github.com/osdevisnot/sorvor/pkg/logger"
+	"github.com/osdevisnot/sorvor/pkg/pkgjson"
+	"github.com/osdevisnot/sorvor/pkg/sorvor"
 )
+
+// Version stores current version of sorvor binary.
+// During builds this gets replaced by real version number.
+var Version = "development"
 
 func readOptions() *sorvor.Sorvor {
 	var err error
@@ -22,6 +27,9 @@ func readOptions() *sorvor.Sorvor {
 
 	for _, arg := range osArgs {
 		switch {
+		case strings.HasPrefix(arg, "--version"):
+			logger.Info("sørvør version ", Version)
+			os.Exit(0)
 		case strings.HasPrefix(arg, "--host"):
 			serv.Host = arg[len("--host="):]
 		case strings.HasPrefix(arg, "--port"):
