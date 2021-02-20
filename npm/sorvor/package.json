@@ -1,20 +1,20 @@
 {
   "name": "sorvor",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "extremely fast, zero config server for modern web applications.",
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
   "author": "osdevisnot <osdevisnot@gmail.com>",
   "optionalDependencies": {
-    "sorvor-darwin-64": "0.2.17",
-    "sorvor-darwin-arm64": "0.2.17",
-    "sorvor-freebsd-64": "0.2.17",
-    "sorvor-freebsd-arm64": "0.2.17",
-    "sorvor-linux-32": "0.2.17",
-    "sorvor-linux-64": "0.2.17",
-    "sorvor-linux-arm": "0.2.17",
-    "sorvor-linux-arm64": "0.2.17",
-    "sorvor-windows-32": "0.2.17",
-    "sorvor-windows-64": "0.2.17"
+    "sorvor-darwin-64": "0.2.18",
+    "sorvor-darwin-arm64": "0.2.18",
+    "sorvor-freebsd-64": "0.2.18",
+    "sorvor-freebsd-arm64": "0.2.18",
+    "sorvor-linux-32": "0.2.18",
+    "sorvor-linux-64": "0.2.18",
+    "sorvor-linux-arm": "0.2.18",
+    "sorvor-linux-arm64": "0.2.18",
+    "sorvor-windows-32": "0.2.18",
+    "sorvor-windows-64": "0.2.18"
   }
 }
