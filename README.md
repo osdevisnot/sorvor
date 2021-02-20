@@ -3,7 +3,7 @@
 > extremely fast, zero config server for modern web applications.
 
 > Note: sørvør is under heavy development and might not be ready for production.
-> That said, I am actively working on project and expect it to be stable soon.
+> That said, I am actively working on the project and expect it to be stable soon.
 
 ## :sparkles: Features
 
@@ -27,16 +27,16 @@ Use [go binaries](https://gobinaries.com/) to install sørvør:
 curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
 ```
 
-Or, use npm to install sørvør:
-
-```bash
-npm install sorvor
-```
-
 Alternatively, if you have [go](https://golang.org/) installed, use `go get` to install sørvør:
 
 ```bash
 go get github.com/osdevisnot/sorvor
+```
+
+sørvør can also be installed using NPM or yarn:
+
+```bash
+npm install sorvor
 ```
 
 ## :plate_with_cutlery: Usage
