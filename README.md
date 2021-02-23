@@ -9,7 +9,7 @@
 ## Major Features
 
 - **Instant Startup**: `sørvør` is authored in [golang](https://golang.org/), which offers the best startup time for command line applications. Often times, `sørvør` will finish bundling your project by the time a `node.js` bundler starts loading.
-- **Easy Installation**: `sørvør` is distributed as a single binary for all major platforms. It's one command to install `sørvør` using installation method of your choice.
+- **Easy Installation**: `sørvør` is distributed as a single binary for all major platforms. It's just one command to install `sørvør` using installation method of your choice.
 - **Optimize for Production**: Build for production with built-in optimizations and Asset Pipeline.
 
 ## Installation
@@ -21,7 +21,6 @@ curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
 ```
 
 <details>
-
   <summary>See other installation methods</summary>
 
 Alternatively, if you have [go](https://golang.org/) installed, use `go get` to install sørvør:
@@ -48,18 +47,40 @@ sorvor --version
 
 ## Quickstart
 
-You can always refer [example projects](examples) for fully integrated setup using `sørvør`. To get started, let's try to set up a simple React application using `sørvør`.
-
-First, create a basic scaffold using `degit`:
+You can always refer [example projects](examples) for fully integrated setup using `sørvør`. To get started, let's set up a simple Preact application using `sørvør`. First, create a minimal scaffold using `degit`:
 
 ```bash
-npx degit osdevisnot/sorvor-minimal react-example
+npx degit osdevisnot/sorvor-minimal preact-hello
 ```
 
-The basic scaffold comes with a README.md file. Let's start the live reload server using the command:
+The minimal scaffold comes with a README.md file with short description of available commands. Let's start the live reloading server using the command from README.md:
 
 ```bash
 sorvor --serve
+```
+
+This should bundle your project and start a live reloading server at `http://localhost:1234`.
+
+Now, let's add a simple Preact Component which renders Hello World.
+
+```js
+import { h, render } from "https://unpkg.com/preact@10.5.12/dist/preact.module.js";
+
+const Counter = () => <div>Hello World</div>;
+
+render(<Counter />, document.body);
+```
+
+You should notice an error on terminal which should look like this:
+
+```log
+2021/02/23 09:55:58 Warn: Unexpected "<"
+```
+
+This error indicates sorvor is not able to parse JSX syntax we just entered. Let's restart sorvor to be able to parse JSX Syntax:
+
+```bash
+sorvor --serve --loader:.js=jsx --jsx-factory=h
 ```
 
 ## Asset Pipeline
