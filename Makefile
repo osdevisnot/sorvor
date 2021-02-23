@@ -13,6 +13,9 @@ upgrade:
 	@rm go.sum
 	@go get -t -u  ./...
 
+local: main.go
+	go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
+
 build: main.go
 	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-64/sorvor
 	GOOS=darwin  GOARCH=arm64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-arm64/sorvor
