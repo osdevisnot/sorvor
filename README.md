@@ -83,6 +83,46 @@ This error indicates sorvor is not able to parse JSX syntax we just entered. Let
 sorvor --serve --loader:.js=jsx --jsx-factory=h
 ```
 
+On restart, your browser should already be display Hello World rendered using preact.
+
+## Node.js Usage
+
+You can use `sørvør` to bundle browser based applications, but it is equally suitable for node.js applications as well. Let's try to build a simple express server using `sørvør` as build tool.
+
+First of, create a project directory and install `express` as a dependency:
+
+```bash
+mkdir hello-server
+cd hello-seerver
+npm init --yes
+npm install express
+```
+
+Now, let's create a `server.js` file in src directory, and paste below code into it:
+
+```js
+import express from "express";
+
+const app = express();
+const port = 3000;
+
+app.get("/", (req, res) => {
+  res.send("Hello World !!");
+});
+
+app.listen(port, () => {
+  console.log(`App Ready on http://localhost:${port}`);
+});
+```
+
+Now, let's start the build using
+
+```bash
+sorvor src/server.js --serve --platform=node
+```
+
+The platform node automatically adds all the dependencies from `package.json` as external. The `serve` when combined with node platform, builds the entry file and starts running it once the build is complete. Try visiting [http://localhost:3000](http://localhost:3000) to see "Hello World" rendered in the browser.
+
 ## Asset Pipeline
 
 The asset pipeline for `sørvør` is partially inspired by HUGO pipes. To use the asset pipeline, refer below annotations in your HTML entrypoint.
