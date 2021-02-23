@@ -1,7 +1,7 @@
 {
   "name": "sorvor-freebsd-64",
   "version": "0.2.19",
-  "description": "extremely fast, zero config server for modern web applications.",
+  "description": "lightning fast, zero config build tool for modern Javascript and Typescript.",
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
   "author": "osdevisnot <osdevisnot@gmail.com>",
