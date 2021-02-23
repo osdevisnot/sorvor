@@ -16,6 +16,7 @@ import (
 	"github.com/osdevisnot/sorvor/pkg/livereload"
 	"github.com/osdevisnot/sorvor/pkg/logger"
 	"github.com/osdevisnot/sorvor/pkg/pkgjson"
+	"github.com/osdevisnot/sorvor/pkg/sorvor/plugins"
 )
 
 // Sorvor struct
@@ -31,6 +32,7 @@ type Sorvor struct {
 // Esbuild builds a given entrypoint using esbuild
 func (serv *Sorvor) Esbuild(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
+	serv.BuildOptions.Plugins = []api.Plugin{plugins.EnvPlugin, plugins.EsmPlugin}
 	result := api.Build(serv.BuildOptions)
 	for _, err := range result.Errors {
 		logger.Warn(err.Text)
