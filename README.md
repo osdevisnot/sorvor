@@ -77,7 +77,7 @@ You should notice an error on terminal which should look like this:
 2021/02/23 09:55:58 Warn: Unexpected "<"
 ```
 
-This error indicates sorvor is unable to parse JSX syntax we just entered. Let's restart sorvor to be able to parse JSX Syntax:
+This error indicates sørvør was unable to parse JSX syntax we just entered. Let's restart sørvør to be able to parse JSX Syntax:
 
 ```bash
 sorvor --serve --loader:.js=jsx --jsx-factory=h
@@ -98,7 +98,7 @@ npm init --yes
 npm install express
 ```
 
-Now, let's create a `server.js` file in src directory, and paste below code into it:
+Now, let's create a `server.js` file in src directory, and paste below code in it:
 
 ```js
 import express from "express";

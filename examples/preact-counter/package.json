@@ -8,6 +8,6 @@
     "dist": "sorvor src/counter.js --minify --sourcemap"
   },
   "dependencies": {
-    "preact": "^10.5.7"
+    "preact": "^10.5.12"
   }
 }
