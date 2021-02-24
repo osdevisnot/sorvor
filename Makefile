@@ -4,7 +4,7 @@ NPM_PACKAGES := npm/*
 
 export version
 
-.PHONY: clean build upgrade start test release verify
+.PHONY: clean upgrade build start test release verify check
 
 clean:
 	@git clean -fdX
@@ -12,9 +12,10 @@ clean:
 upgrade:
 	@rm go.sum
 	@go get -t -u  ./...
+	@for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; ncu --upgrade --silent; done
 
 build-local: main.go
-	go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
+	@go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
 
 build: main.go
 	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-64/sorvor
@@ -32,9 +33,7 @@ start:
 	@make build && cd ${CURDIR}/examples/preact-counter && yarn install --silent --no-lockfile && yarn start
 
 test:
-	@make clean && make build-local && \
-	for dir in $(EXAMPLES_MINIMAL); do cd ${CURDIR}/$${dir}; sorvor; done
-	for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; yarn install --silent --no-lockfile; yarn build; done
+	@make clean && make build-local && make check
 
 release:
 	@printf "Current Version: " && git describe --tags `git rev-list --tags --max-count=1`
@@ -46,9 +45,10 @@ release:
 	make verify
 
 verify:
-	@curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
-	@cd ${CURDIR}/examples/minimal && sorvor && \
-	cd ${CURDIR}/examples/minimal-css && sorvor && \
-	cd ${CURDIR}/examples/minimal-typescript && sorvor && \
-	cd ${CURDIR}/examples/preact-counter && npm install && npm run build && \
-	cd ${CURDIR}/examples/react-counter && npm install && npm run build
+	@curl -sf https://gobinaries.com/osdevisnot/sorvor | sh && \
+	make check
+
+
+check:
+	@for dir in $(EXAMPLES_MINIMAL); do cd ${CURDIR}/$${dir}; sorvor; done && \
+    for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; yarn install --silent --no-lockfile; yarn build; done
