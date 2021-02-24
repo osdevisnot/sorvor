@@ -13,6 +13,9 @@ upgrade:
 	@rm go.sum
 	@go get -t -u  ./...
 
+build-local: main.go
+	go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
+
 build: main.go
 	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-64/sorvor
 	GOOS=darwin  GOARCH=arm64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-arm64/sorvor
@@ -29,7 +32,7 @@ start:
 	@make build && cd ${CURDIR}/examples/preact-counter && yarn install --silent --no-lockfile && yarn start
 
 test:
-	@make clean && make build && \
+	@make clean && make build-local && \
 	for dir in $(EXAMPLES_MINIMAL); do cd ${CURDIR}/$${dir}; sorvor; done
 	for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; yarn install --silent --no-lockfile; yarn build; done
 
