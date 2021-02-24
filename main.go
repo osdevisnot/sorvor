@@ -93,15 +93,15 @@ func main() {
 
 	if filepath.Ext(serv.Entry) != ".html" {
 		if serv.Serve == true {
-			serv.Run(serv.Entry)
+			serv.RunEntry(serv.Entry)
 		} else {
-			serv.Esbuild(serv.Entry)
+			serv.BuildEntry(serv.Entry)
 		}
 	} else {
 		if serv.Serve == true {
-			serv.Server(pkgJSON)
+			serv.ServeIndex(pkgJSON)
 		} else {
-			serv.Build(pkgJSON)
+			serv.BuildIndex(pkgJSON)
 		}
 	}
 }

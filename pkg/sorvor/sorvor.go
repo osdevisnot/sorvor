@@ -1,4 +1,4 @@
-// Package sorvor is an extremely fast, zero config Server for modern web applications.
+// Package sorvor is an extremely fast, zero config ServeIndex for modern web applications.
 package sorvor
 
 import (
@@ -29,8 +29,8 @@ type Sorvor struct {
 	Secure       bool
 }
 
-// Esbuild builds a given entrypoint using esbuild
-func (serv *Sorvor) Esbuild(entry string) (string, api.BuildResult) {
+// BuildEntry builds a given entrypoint using esbuild
+func (serv *Sorvor) BuildEntry(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
 	serv.BuildOptions.Plugins = []api.Plugin{plugins.EnvPlugin, plugins.EsmPlugin}
 	result := api.Build(serv.BuildOptions)
@@ -47,8 +47,8 @@ func (serv *Sorvor) Esbuild(entry string) (string, api.BuildResult) {
 	return outfile, result
 }
 
-// Run builds an entrypoint and launches the resulting built file using node.js
-func (serv *Sorvor) Run(entry string) {
+// RunEntry builds an entrypoint and launches the resulting built file using node.js
+func (serv *Sorvor) RunEntry(entry string) {
 	var cmd *exec.Cmd
 	var outfile string
 	var result api.BuildResult
@@ -68,15 +68,15 @@ func (serv *Sorvor) Run(entry string) {
 	}
 	// start esbuild in watch mode
 	serv.BuildOptions.Watch = &api.WatchMode{OnRebuild: onRebuild}
-	outfile, result = serv.Esbuild(entry)
+	outfile, result = serv.BuildEntry(entry)
 	outfile = filepath.Join(serv.BuildOptions.Outdir, outfile)
 	onRebuild(result)
 	wg.Wait()
 }
 
-// Build walks the index.html, collect all the entries from <script...></script> and <link .../> tags
+// BuildIndex walks the index.html, collect all the entries from <script...></script> and <link .../> tags
 // it then runs it through esbuild and replaces the references in index.html with new paths
-func (serv *Sorvor) Build(pkg *pkgjson.PkgJSON) []string {
+func (serv *Sorvor) BuildIndex(pkg *pkgjson.PkgJSON) []string {
 
 	target := filepath.Join(serv.BuildOptions.Outdir, "index.html")
 
@@ -99,7 +99,7 @@ func (serv *Sorvor) Build(pkg *pkgjson.PkgJSON) []string {
 			} else {
 				entry = filepath.Join(filepath.Dir(serv.Entry), entry)
 			}
-			outfile, _ := serv.Esbuild(entry)
+			outfile, _ := serv.BuildEntry(entry)
 			return outfile
 		},
 	}).ParseFiles(serv.Entry)
@@ -135,8 +135,8 @@ func (serv *Sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
 	return
 }
 
-// Server launches esbuild in watch mode and live reloads all connected browsers
-func (serv *Sorvor) Server(pkg *pkgjson.PkgJSON) {
+// ServeIndex launches esbuild in watch mode and live reloads all connected browsers
+func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 	liveReload := livereload.New()
 	liveReload.Start()
 	wg := new(sync.WaitGroup)
@@ -153,10 +153,10 @@ func (serv *Sorvor) Server(pkg *pkgjson.PkgJSON) {
 				liveReload.Reload()
 			},
 		}
-		serv.Build(pkg)
+		serv.BuildIndex(pkg)
 	}()
 
-	// start our own Server
+	// start our own ServeIndex
 	go func() {
 		http.Handle("/livereload", liveReload)
 		http.Handle("/", serv)
@@ -168,11 +168,11 @@ func (serv *Sorvor) Server(pkg *pkgjson.PkgJSON) {
 			}
 			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.Host, serv.Port))
 			err := http.ListenAndServeTLS(serv.Port, "cert.pem", "key.pem", nil)
-			logger.Error(err, "Failed to start https Server")
+			logger.Error(err, "Failed to start https ServeIndex")
 		} else {
 			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://", serv.Host, serv.Port))
 			err := http.ListenAndServe(serv.Port, nil)
-			logger.Error(err, "Failed to start http Server")
+			logger.Error(err, "Failed to start http ServeIndex")
 		}
 	}()
 
