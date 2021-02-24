@@ -16,7 +16,7 @@ import (
 
 var version = "development"
 
-func readOptions() *sorvor.Sorvor {
+func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 	var err error
 	var esbuildArgs []string
 
@@ -71,6 +71,11 @@ func readOptions() *sorvor.Sorvor {
 	if serv.Host == "" {
 		serv.Host = "localhost"
 	}
+	if serv.BuildOptions.Platform == api.PlatformNode {
+		for key, _ := range pkgJSON.Dependencies {
+			serv.BuildOptions.External = append(serv.BuildOptions.External, key)
+		}
+	}
 	return serv
 }
 
@@ -81,7 +86,7 @@ func main() {
 		pkgJSON, err = pkgjson.Parse(pkg)
 	}
 
-	serv := readOptions()
+	serv := readOptions(pkgJSON)
 
 	err = os.MkdirAll(serv.BuildOptions.Outdir, 0775)
 	logger.Fatal(err, "Failed to create output directory")
