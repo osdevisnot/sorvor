@@ -1,6 +1,6 @@
 {
   "name": "sorvor-linux-64",
-  "version": "0.2.19",
+  "version": "0.3.1",
   "description": "lightning fast, zero config build tool for modern Javascript and Typescript.",
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
