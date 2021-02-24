@@ -59,7 +59,7 @@ The minimal scaffold comes with a README.md file with short description of avail
 sorvor --serve
 ```
 
-This should bundle your project and start a live reloading server at `http://localhost:1234`.
+This should bundle your project and start a live reloading server at [http://localhost:1234](http://localhost:1234).
 
 Now, let's add a simple Preact Component which renders Hello World.
 
@@ -77,13 +77,13 @@ You should notice an error on terminal which should look like this:
 2021/02/23 09:55:58 Warn: Unexpected "<"
 ```
 
-This error indicates sorvor is not able to parse JSX syntax we just entered. Let's restart sorvor to be able to parse JSX Syntax:
+This error indicates sorvor is unable to parse JSX syntax we just entered. Let's restart sorvor to be able to parse JSX Syntax:
 
 ```bash
 sorvor --serve --loader:.js=jsx --jsx-factory=h
 ```
 
-On restart, your browser should already be display Hello World rendered using preact.
+On restart, your browser should display Hello World rendered using preact.
 
 ## Node.js Usage
 
