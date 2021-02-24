@@ -18,9 +18,9 @@ import (
 	"time"
 )
 
-// JsSnippeet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
-//		<script>{{ LiveReload.JsSnippeet }}</script>
-const JsSnippeet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.info('[sørvør] listening for file changes');</script>`
+// JsSnippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
+//		<script>{{ LiveReload.JsSnippet }}</script>
+const JsSnippet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.info('[sørvør] listening for file changes');</script>`
 
 // LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {

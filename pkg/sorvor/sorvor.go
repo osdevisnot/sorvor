@@ -88,7 +88,7 @@ func (serv *Sorvor) Build(pkg *pkgjson.PkgJSON) []string {
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
 		"livereload": func() template.HTML {
 			if serv.Serve == true {
-				return template.HTML(livereload.JsSnippeet)
+				return template.HTML(livereload.JsSnippet)
 			}
 			return ""
 		},
