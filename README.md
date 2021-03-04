@@ -125,7 +125,7 @@ The platform node automatically adds all the dependencies from `package.json` as
 
 ## Asset Pipeline
 
-The asset pipeline for `sørvør` is partially inspired by HUGO pipes. To use the asset pipeline, refer below annotations in your HTML entrypoint.
+The asset pipeline for `sørvør` is partially inspired by HUGO pipes. To use the asset pipeline, use below annotations in your HTML entrypoint.
 
 ### Live Reload
 
