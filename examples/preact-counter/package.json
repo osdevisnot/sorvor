@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "sorvor public/index.html --loader:.js=jsx --jsx-factory=h --minify --sourcemap=external",
+    "build": "sorvor public/index.html --loader:.js=jsx --jsx-factory=h --minify --sourcemap",
     "start": "sorvor public/index.html --loader:.js=jsx --jsx-factory=h --serve",
     "dist": "sorvor src/counter.js --minify --sourcemap"
   },

@@ -22,12 +22,16 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 
 	osArgs := os.Args[1:]
 	serv := &sorvor.Sorvor{}
+	hasOutDir := false
 
 	for _, arg := range osArgs {
 		switch {
 		case strings.HasPrefix(arg, "--version"):
 			logger.Info("sørvør version", version)
 			os.Exit(0)
+		case strings.HasPrefix(arg, "--outdir"):
+			hasOutDir = true
+			esbuildArgs = append(esbuildArgs, arg)
 		case strings.HasPrefix(arg, "--host"):
 			serv.Host = arg[len("--host="):]
 		case strings.HasPrefix(arg, "--port"):
@@ -45,12 +49,14 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 		}
 	}
 
+	esbuildArgs = append(esbuildArgs, "--bundle")
+	if !hasOutDir {
+		esbuildArgs = append(esbuildArgs, "--outdir=dist")
+	}
+
 	serv.BuildOptions, err = cli.ParseBuildOptions(esbuildArgs)
 	logger.Fatal(err, "Invalid option for esbuild")
-
-	serv.BuildOptions.Bundle = true
 	serv.BuildOptions.Write = true
-
 	if serv.Serve == true {
 		if serv.Port == "" {
 			serv.Port = ":1234"
@@ -59,9 +65,7 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 	} else {
 		serv.BuildOptions.Define = map[string]string{"process.env.NODE_ENV": "'production'"}
 	}
-	if serv.BuildOptions.Outdir == "" {
-		serv.BuildOptions.Outdir = "dist"
-	}
+
 	if serv.BuildOptions.Format == api.FormatDefault {
 		serv.BuildOptions.Format = api.FormatESModule
 	}
