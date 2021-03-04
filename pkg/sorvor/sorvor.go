@@ -58,13 +58,13 @@ func (serv *Sorvor) RunEntry(entry string) {
 	var onRebuild = func(result api.BuildResult) {
 		if cmd != nil {
 			err := cmd.Process.Signal(syscall.SIGINT)
-			logger.Fatal(err, "failed to stop ", outfile)
+			logger.Fatal(err, "Failed to stop ", outfile)
 		}
 		cmd = exec.Command("node", outfile)
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
 		err := cmd.Start()
-		logger.Fatal(err, "failed to start ", outfile)
+		logger.Fatal(err, "Failed to start ", outfile)
 	}
 	// start esbuild in watch mode
 	serv.BuildOptions.Watch = &api.WatchMode{OnRebuild: onRebuild}
@@ -115,26 +115,6 @@ func (serv *Sorvor) BuildIndex(pkg *pkgjson.PkgJSON) []string {
 	return entries
 }
 
-// ServeHTTP is an http server handler for sorvor
-func (serv *Sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
-	res.Header().Set("access-control-allow-origin", "*")
-	root := filepath.Join(serv.BuildOptions.Outdir, filepath.Clean(request.URL.Path))
-
-	if stat, err := os.Stat(root); err != nil {
-		// Serve a root index when root is not found
-		http.ServeFile(res, request, filepath.Join(serv.BuildOptions.Outdir, "index.html"))
-		return
-	} else if stat.IsDir() {
-		// Serve root index when requested root is a directory
-		http.ServeFile(res, request, filepath.Join(serv.BuildOptions.Outdir, "index.html"))
-		return
-	}
-
-	// else just Serve the file normally...
-	http.ServeFile(res, request, root)
-	return
-}
-
 // ServeIndex launches esbuild in watch mode and live reloads all connected browsers
 func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 	liveReload := livereload.New()
@@ -156,7 +136,7 @@ func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 		serv.BuildIndex(pkg)
 	}()
 
-	// start our own ServeIndex
+	// start our own Server
 	go func() {
 		http.Handle("/livereload", liveReload)
 		http.Handle("/", serv)
@@ -177,4 +157,20 @@ func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 	}()
 
 	wg.Wait()
+}
+
+// ServeHTTP is an http server handler for sorvor
+func (serv *Sorvor) ServeHTTP(res http.ResponseWriter, request *http.Request) {
+	res.Header().Set("access-control-allow-origin", "*")
+	root := filepath.Join(serv.BuildOptions.Outdir, filepath.Clean(request.URL.Path))
+
+	if stat, err := os.Stat(root); err != nil || stat.IsDir() {
+		// Serve a root index when root is not found or when root is a directory
+		http.ServeFile(res, request, filepath.Join(serv.BuildOptions.Outdir, "index.html"))
+		return
+	}
+
+	// else just Serve the file normally...
+	http.ServeFile(res, request, root)
+	return
 }
