@@ -32,7 +32,7 @@ type Sorvor struct {
 // BuildEntry builds a given entrypoint using esbuild
 func (serv *Sorvor) BuildEntry(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
-	serv.BuildOptions.Plugins = []api.Plugin{plugins.EnvPlugin, plugins.EsmPlugin}
+	serv.BuildOptions.Plugins = []api.Plugin{plugins.EnvPlugin}
 	result := api.Build(serv.BuildOptions)
 	for _, err := range result.Errors {
 		logger.Warn(err.Text)
