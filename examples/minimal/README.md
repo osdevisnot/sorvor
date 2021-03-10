@@ -8,10 +8,12 @@ The `esbuild` annotation in `public/index.html` instructs `sørvør` to build `p
 
 ## prerequisites
 
-`sørvør` should be installed, preferably using [go binaries](https://gobinaries.com/):
+`sørvør` should be installed, preferably using `npm` or `yarn`:
 
 ```bash
-curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
+npm install sorvor
+# or
+yarn add sorvor
 ```
 
 ## available commands

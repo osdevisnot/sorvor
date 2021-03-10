@@ -14,22 +14,7 @@
 
 ## Installation
 
-The easiest method to install sørvør is using [go binaries](https://gobinaries.com/):
-
-```bash
-curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
-```
-
-<details>
-  <summary>See other installation methods</summary>
-
-Alternatively, if you have [go](https://golang.org/) installed, use `go get` to install sørvør:
-
-```bash
-go get github.com/osdevisnot/sorvor
-```
-
-sørvør can also be installed using NPM or yarn package manager:
+The easiest method to install sørvør is using `npm` or `yarn`:
 
 ```bash
 npm install sorvor
@@ -37,7 +22,11 @@ npm install sorvor
 yarn add sorvor
 ```
 
-</details>
+Alternatively, if you have [go](https://golang.org/) installed, use `go get` to install sørvør:
+
+```bash
+go get github.com/osdevisnot/sorvor
+```
 
 Once installed, verify your installation using `version` flag
 
@@ -64,7 +53,7 @@ This should bundle your project and start a live reloading server at [http://loc
 Now, let's add a simple Preact Component which renders Hello World.
 
 ```js
-import { h, render } from "https://unpkg.com/preact@10.5.12/dist/preact.module.js";
+import { h, render } from "preact";
 
 const Counter = () => <div>Hello World</div>;
 
@@ -154,17 +143,6 @@ To run an entrypoint through `esbuild`, use `esbuild` annotation in your HTML en
 ## Plugins
 
 `sørvør` enhances esbuild with few quality of life plugins. These plugins are enabled by default and require no configuration for usage.
-
-### esm plugin
-
-This plugin allows you to import HTTP URLs into JavaScript code. The code will be automatically downloaded at build time. For production builds, the resolved file will be bundled together with your code.
-
-With this plugin, you can import your ESM dependencies from CDN urls **without** installing it via NPM:
-
-```js
-import { zip } from "https://unpkg.com/lodash-es@4.17.15/lodash.js";
-console.log(zip([1, 2], ["a", "b"]));
-```
 
 ### env plugin
 

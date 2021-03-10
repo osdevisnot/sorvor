@@ -4,10 +4,12 @@ This example demonstrates a simple react-counter using sørvør as build system.
 
 ## prerequisites
 
-sørvør should be installed, preferably using Use [go binaries](https://gobinaries.com/):
+`sørvør` should be installed, preferably using `npm` or `yarn`:
 
 ```bash
-curl -sf https://gobinaries.com/osdevisnot/sorvor | sh
+npm install sorvor
+# or
+yarn add sorvor
 ```
 
 ## available commands
