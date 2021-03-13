@@ -15,7 +15,7 @@ upgrade:
 	@for dir in $(EXAMPLES_NPM); do cd ${CURDIR}/$${dir}; ncu --upgrade --silent; done
 
 build-local: main.go
-	@go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
+	go build -ldflags="-X 'main.version=local'" -o /usr/local/bin/sorvor
 
 build: main.go
 	GOOS=darwin  GOARCH=amd64 go build -ldflags="-X 'main.version=$(version)'" -o npm/sorvor-darwin-64/sorvor

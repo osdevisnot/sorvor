@@ -140,6 +140,14 @@ To run an entrypoint through `esbuild`, use `esbuild` annotation in your HTML en
 <script type="module" src="{{ esbuild "index.js" }}"></script>
 ```
 
+### Copy static files
+
+To copy a file from source to outdir, use `copy` annotation in your HTML entrypoint like this:
+
+```html
+<link rel="shortcut icon" href='{{ copy "assets/favicon.ico" }}' type="image/x-icon" />
+```
+
 ## Plugins
 
 `sørvør` enhances esbuild with few quality of life plugins. These plugins are enabled by default and require no configuration for usage.

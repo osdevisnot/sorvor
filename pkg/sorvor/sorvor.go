@@ -3,6 +3,7 @@ package sorvor
 
 import (
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -101,6 +102,17 @@ func (serv *Sorvor) BuildIndex(pkg *pkgjson.PkgJSON) []string {
 			}
 			outfile, _ := serv.BuildEntry(entry)
 			return outfile
+		},
+		"copy": func(asset string) string {
+			dest := filepath.Join(serv.BuildOptions.Outdir, asset)
+			go func() {
+				input, err := ioutil.ReadFile(filepath.Join(filepath.Dir(serv.Entry), asset))
+				logger.Error(err, "Failed to copy asset", asset)
+				err = os.MkdirAll(filepath.Join(serv.BuildOptions.Outdir, filepath.Dir(asset)), 0775)
+				err = ioutil.WriteFile(dest, input, 0644)
+				logger.Error(err, "Error Creating destination file", dest)
+			}()
+			return asset
 		},
 	}).ParseFiles(serv.Entry)
 	logger.Fatal(err, "Unable to parse index.html")
