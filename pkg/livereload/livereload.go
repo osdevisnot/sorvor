@@ -20,7 +20,7 @@ import (
 
 // JsSnippet is a minimal javascript client for browsers. Embed it in your index.html using a script tag:
 //		<script>{{ LiveReload.JsSnippet }}</script>
-const JsSnippet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = reload;source.onerror = () => (source.onopen = reload);console.info('[sørvør] listening for file changes');</script>`
+const JsSnippet = `<script>const source = new EventSource('/livereload');const reload = () => location.reload(true);source.onmessage = (e) => { e.data === 'reload' ? reload() : console.error(e.data) };source.onerror = () => (source.onopen = reload);console.info('[sørvør] listening for file changes');</script>`
 
 // LiveReload keeps track of connected browser clients and broadcasts messages to them
 type LiveReload struct {
@@ -62,6 +62,10 @@ func (livereload *LiveReload) Start() {
 // Reload sends a reload signal to all connected browsers
 func (livereload *LiveReload) Reload() {
 	livereload.messages <- "reload"
+}
+
+func (livereload *LiveReload) Error(msg string) {
+	livereload.messages <- msg
 }
 
 // sendEvent is a helper to create formatted SSE events based on message data.

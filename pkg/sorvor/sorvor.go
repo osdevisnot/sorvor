@@ -135,11 +135,15 @@ func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 	go func() {
 		serv.BuildOptions.Watch = &api.WatchMode{
 			OnRebuild: func(result api.BuildResult) {
-				// for _, err := range result.Errors {
-				// logger.Warn(err.Text)
-				// }
-				// send livereload message to connected clients
-				liveReload.Reload()
+				if len(result.Errors) > 0 {
+					// Todo: Enhance location information for error
+					for _, err := range result.Errors {
+						liveReload.Error("Build Error: " + err.Text + " @ " + err.Location.File)
+					}
+				} else {
+					// send livereload message to connected clients
+					liveReload.Reload()
+				}
 			},
 		}
 		serv.BuildIndex(pkg)
