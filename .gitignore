@@ -21,9 +21,7 @@ vendor/
 # Project ignores
 dist
 node_modules
-.idea/*.iws
-.idea/workspace.xml
-.idea/tasks.xml
+.idea
 *.pem
 *.tgz
 sorvor
