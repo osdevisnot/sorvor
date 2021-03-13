@@ -42,7 +42,7 @@ func GenerateKeyPair(host string) {
 	logger.Fatal(err, "Failed to create certificate")
 
 	certOut, err := os.Create("cert.pem")
-	logger.Fatal(err, "failed to open cert.pem for writing")
+	logger.Fatal(err, "Failed to open cert.pem for writing")
 	defer certOut.Close()
 	err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	logger.Fatal(err, "Failed to write data to cert.pem")

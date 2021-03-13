@@ -23,6 +23,7 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 	osArgs := os.Args[1:]
 	serv := &sorvor.Sorvor{}
 	hasOutDir := false
+	hasLogLevel := false
 
 	for _, arg := range osArgs {
 		switch {
@@ -32,11 +33,14 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 		case strings.HasPrefix(arg, "--outdir"):
 			hasOutDir = true
 			esbuildArgs = append(esbuildArgs, arg)
+		case strings.HasPrefix(arg, "--log-level"):
+			hasLogLevel = true
+			esbuildArgs = append(esbuildArgs, arg)
 		case strings.HasPrefix(arg, "--host"):
 			serv.Host = arg[len("--host="):]
 		case strings.HasPrefix(arg, "--port"):
 			port, err := strconv.Atoi(arg[len("--port="):])
-			logger.Fatal(err, "invalid port value")
+			logger.Fatal(err, "Invalid port value")
 			serv.Port = ":" + strconv.Itoa(port)
 		case arg == "--serve":
 			serv.Serve = true
@@ -52,6 +56,9 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 	esbuildArgs = append(esbuildArgs, "--bundle")
 	if !hasOutDir {
 		esbuildArgs = append(esbuildArgs, "--outdir=dist")
+	}
+	if !hasLogLevel {
+		esbuildArgs = append(esbuildArgs, "--log-level=warning")
 	}
 
 	serv.BuildOptions, err = cli.ParseBuildOptions(esbuildArgs)
@@ -76,10 +83,11 @@ func readOptions(pkgJSON *pkgjson.PkgJSON) *sorvor.Sorvor {
 		serv.Host = "localhost"
 	}
 	if serv.BuildOptions.Platform == api.PlatformNode {
-		for key, _ := range pkgJSON.Dependencies {
+		for key := range pkgJSON.Dependencies {
 			serv.BuildOptions.External = append(serv.BuildOptions.External, key)
 		}
 	}
+	logger.Level = serv.BuildOptions.LogLevel
 	return serv
 }
 

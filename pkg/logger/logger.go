@@ -5,8 +5,11 @@ import (
 	"log"
 	"strings"
 
+	"github.com/evanw/esbuild/pkg/api"
 	"github.com/osdevisnot/sorvor/pkg/color"
 )
+
+var Level api.LogLevel
 
 // Fatal logs message with red colored prefix and exits the program if `err != nil`
 func Fatal(err error, msg ...string) {
@@ -17,19 +20,23 @@ func Fatal(err error, msg ...string) {
 
 // Error logs message with red colored prefix if `err != nil`
 func Error(err error, msg ...string) {
-	if err != nil {
+	if Level >= api.LogLevelError && err != nil {
 		log.Printf("%s %s - %v\n", color.PrefixError, strings.Join(msg, " "), err)
 	}
 }
 
 // Warn logs message with yellow colored prefix
 func Warn(msg ...string) {
-	log.Printf("%s %s\n", color.PrefixWarn, strings.Join(msg, " "))
+	if Level >= api.LogLevelWarning {
+		log.Printf("%s %s\n", color.PrefixWarn, strings.Join(msg, " "))
+	}
 }
 
 // Info logs message with green colored prefix
 func Info(msg ...string) {
-	log.Printf("%s %s\n", color.PrefixInfo, strings.Join(msg, " "))
+	if Level >= api.LogLevelInfo {
+		log.Printf("%s %s\n", color.PrefixInfo, strings.Join(msg, " "))
+	}
 }
 
 // BlueText returns string with blur foreground color

@@ -35,9 +35,6 @@ func (serv *Sorvor) BuildEntry(entry string) (string, api.BuildResult) {
 	serv.BuildOptions.EntryPoints = []string{entry}
 	serv.BuildOptions.Plugins = []api.Plugin{plugins.EnvPlugin}
 	result := api.Build(serv.BuildOptions)
-	for _, err := range result.Errors {
-		logger.Warn(err.Text)
-	}
 	var outfile string
 	for _, file := range result.OutputFiles {
 		if filepath.Ext(file.Path) != "map" {
@@ -59,13 +56,13 @@ func (serv *Sorvor) RunEntry(entry string) {
 	var onRebuild = func(result api.BuildResult) {
 		if cmd != nil {
 			err := cmd.Process.Signal(syscall.SIGINT)
-			logger.Fatal(err, "Failed to stop ", outfile)
+			logger.Fatal(err, "Failed to stop", outfile)
 		}
 		cmd = exec.Command("node", outfile)
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
 		err := cmd.Start()
-		logger.Fatal(err, "Failed to start ", outfile)
+		logger.Fatal(err, "Failed to start", outfile)
 	}
 	// start esbuild in watch mode
 	serv.BuildOptions.Watch = &api.WatchMode{OnRebuild: onRebuild}
@@ -83,7 +80,7 @@ func (serv *Sorvor) BuildIndex(pkg *pkgjson.PkgJSON) []string {
 
 	var entries []string
 	if _, err := os.Stat(serv.Entry); err != nil {
-		logger.Fatal(err, "Entry file does not exist. ", serv.Entry)
+		logger.Fatal(err, "Entry file does not exist.", serv.Entry)
 	}
 
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
@@ -138,9 +135,9 @@ func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 	go func() {
 		serv.BuildOptions.Watch = &api.WatchMode{
 			OnRebuild: func(result api.BuildResult) {
-				for _, err := range result.Errors {
-					logger.Warn(err.Text)
-				}
+				// for _, err := range result.Errors {
+				// logger.Warn(err.Text)
+				// }
 				// send livereload message to connected clients
 				liveReload.Reload()
 			},
@@ -158,13 +155,13 @@ func (serv *Sorvor) ServeIndex(pkg *pkgjson.PkgJSON) {
 			if _, err := os.Stat("key.pem"); os.IsNotExist(err) {
 				cert.GenerateKeyPair(serv.Host)
 			}
-			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("https://", serv.Host, serv.Port))
+			logger.Info("sørvør", "ready on", logger.BlueText("https://", serv.Host, serv.Port))
 			err := http.ListenAndServeTLS(serv.Port, "cert.pem", "key.pem", nil)
-			logger.Error(err, "Failed to start https ServeIndex")
+			logger.Error(err, "Failed to start https Server")
 		} else {
-			logger.Info(logger.BlueText("sørvør"), "ready on", logger.BlueText("http://", serv.Host, serv.Port))
+			logger.Info("sørvør", "ready on", logger.BlueText("http://", serv.Host, serv.Port))
 			err := http.ListenAndServe(serv.Port, nil)
-			logger.Error(err, "Failed to start http ServeIndex")
+			logger.Error(err, "Failed to start http Server")
 		}
 	}()
 
