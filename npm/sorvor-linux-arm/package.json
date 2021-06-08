@@ -1,6 +1,6 @@
 {
   "name": "sorvor-linux-arm",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "lightning fast, zero config build tool for modern Javascript and Typescript.",
   "repository": "osdevisnot/sorvor",
   "license": "MIT",
