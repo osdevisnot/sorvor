@@ -82,7 +82,7 @@ First of, create a project directory and install `express` as a dependency:
 
 ```bash
 mkdir hello-server
-cd hello-seerver
+cd hello-server
 npm init --yes
 npm install express
 ```
