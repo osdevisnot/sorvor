@@ -7,7 +7,7 @@
     "start": "sorvor src/server.js --platform=node --format=cjs --serve"
   },
   "dependencies": {
-    "apollo-server": "^2.25.1",
-    "graphql": "^15.5.0"
+    "apollo-server": "^3.6.1",
+    "graphql": "^16.2.0"
   }
 }

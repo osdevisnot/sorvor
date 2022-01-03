@@ -7,6 +7,6 @@
     "start": "sorvor src/server.js --platform=node --format=cjs --serve"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.2"
   }
 }

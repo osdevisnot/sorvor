@@ -7,6 +7,6 @@
     "start": "sorvor src/server.js --platform=node --serve"
   },
   "dependencies": {
-    "fastify": "^3.17.0"
+    "fastify": "^3.25.3"
   }
 }
